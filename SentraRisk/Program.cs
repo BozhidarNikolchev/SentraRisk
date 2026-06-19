@@ -13,15 +13,39 @@ var input = new WebsiteInput
 var calculator = new RiskCalculator();
 var result = calculator.Calculate(input);
 
-Console.WriteLine($"Risk Score: {result.Score} ({result.RiskLevel})");
+Console.WriteLine("\n=== SENTRARISK REPORT ===\n");
 
-Console.WriteLine("\nIssues:");
-foreach (var issue in result.Issues)
+Console.WriteLine($"📊 Summary: {result.Summary}");
+
+Console.WriteLine($"\n🚨 Top Risk: {result.TopIssue}");
+
+Console.WriteLine($"\nRisk Score: {result.Score}/100 ({result.RiskLevel})");
+
+Console.WriteLine("\n🚨 Critical Issues:");
+foreach (var issue in result.CriticalIssues)
 {
     Console.WriteLine($"- {issue}");
 }
 
-Console.WriteLine("\nRecommendations:");
+Console.WriteLine("\n⚠ Medium Issues:");
+foreach (var issue in result.MediumIssues)
+{
+    Console.WriteLine($"- {issue}");
+}
+
+Console.WriteLine("\nℹ Low Issues:");
+foreach (var issue in result.LowIssues)
+{
+    Console.WriteLine($"- {issue}");
+}
+
+Console.WriteLine("\n🚀 Priority Actions:");
+foreach (var action in result.PriorityActions)
+{
+    Console.WriteLine($"- {action}");
+}
+
+Console.WriteLine("\n✅ Recommendations:");
 foreach (var rec in result.Recommendations)
 {
     Console.WriteLine($"- {rec}");
