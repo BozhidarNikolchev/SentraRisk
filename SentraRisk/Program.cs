@@ -1,41 +1,28 @@
-var builder = WebApplication.CreateBuilder(args);
+using SentraRisk.Models;
+using SentraRisk.Logic;
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+var input = new WebsiteInput
 {
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
-
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+    UsesHttps = false,
+    HasBackup = false,
+    UsesOutdatedPlugins = true,
+    HasAdminUser = true,
+    HasTwoFactorAuth = false
 };
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+var calculator = new RiskCalculator();
+var result = calculator.Calculate(input);
 
-app.Run();
+Console.WriteLine($"Risk Score: {result.Score} ({result.RiskLevel})");
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
+Console.WriteLine("\nIssues:");
+foreach (var issue in result.Issues)
 {
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    Console.WriteLine($"- {issue}");
+}
+
+Console.WriteLine("\nRecommendations:");
+foreach (var rec in result.Recommendations)
+{
+    Console.WriteLine($"- {rec}");
 }
