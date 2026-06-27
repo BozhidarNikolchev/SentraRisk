@@ -1,0 +1,6 @@
+@SentraRisk.API_HostAddress = http://localhost:5232
+
+GET {{SentraRisk.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
