@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SentraRisk</title>
+</head>
+<body>
+
+<h1>SentraRisk Assessment</h1>
+
+<label>
+    <input type="checkbox" id="https">
+    Uses HTTPS
+</label>
+<br>
+
+<label>
+    <input type="checkbox" id="backup">
+    Has Backup
+</label>
+<br>
+
+<label>
+    <input type="checkbox" id="plugins">
+    Uses Outdated Plugins
+</label>
+<br>
+
+<label>
+    <input type="checkbox" id="admin">
+    Uses Default Admin User
+</label>
+<br>
+
+<label>
+    <input type="checkbox" id="twofa">
+    Uses Two-Factor Authentication
+</label>
+
+<br><br>
+
+<button onclick="calculateRisk()">
+    Analyze
+</button>
+
+<hr>
+
+<pre id="result"></pre>
+
+<script src="app.js"></script>
+
+</body>
+</html>

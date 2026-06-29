@@ -5,7 +5,20 @@ builder.Services.AddControllers();              // Enables Controllers
 builder.Services.AddEndpointsApiExplorer();     // Enables Swagger endpoints
 builder.Services.AddSwaggerGen();               // Enables Swagger UI
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFrontend",
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
+        });
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowFrontend");
 
 //  Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
