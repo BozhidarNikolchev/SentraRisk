@@ -20,6 +20,40 @@ async function calculateRisk() {
 
     const result = await response.json();
 
-    document.getElementById("result").textContent =
-        JSON.stringify(result, null, 2);
+    document.getElementById("result").innerHTML = `
+        <h2 class="${result.riskLevel.toLowerCase()}">
+    Risk Score: ${result.score} (${result.riskLevel})
+</h2>
+
+        <h3>Summary</h3>
+        <p>${result.summary}</p>
+
+        <h3>Top Risk</h3>
+        <p>${result.topIssue}</p>
+
+        <h3>Critical Issues</h3>
+        <ul>
+            ${result.criticalIssues.map(i => `<li>${i}</li>`).join("")}
+        </ul>
+
+        <h3>Medium Issues</h3>
+        <ul>
+            ${result.mediumIssues.map(i => `<li>${i}</li>`).join("")}
+        </ul>
+
+        <h3>Low Issues</h3>
+        <ul>
+            ${result.lowIssues.map(i => `<li>${i}</li>`).join("")}
+        </ul>
+
+        <h3>Recommendations</h3>
+        <ul>
+            ${result.recommendations.map(r => `<li>${r}</li>`).join("")}
+        </ul>
+
+        <h3>Priority Actions</h3>
+        <ul>
+            ${result.priorityActions.map(a => `<li>${a}</li>`).join("")}
+        </ul>
+    `;
 }
