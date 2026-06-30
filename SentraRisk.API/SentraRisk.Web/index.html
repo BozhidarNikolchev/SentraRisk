@@ -1,86 +1,174 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>SentraRisk</title>
 
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        max-width: 900px;
-        margin: 20px auto;
-        padding: 20px;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+        }
 
-    button {
-        padding: 10px 20px;
-        font-size: 16px;
-    }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
 
-    #result {
-        margin-top: 20px;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-    }
+        #result {
+            margin-top: 20px;
+            padding: 30px;
+            border-radius: 12px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
 
-    .low {
-        color: green;
-    }
+        .low {
+            color: green;
+        }
 
-    .medium {
-        color: orange;
-    }
+        .medium {
+            color: orange;
+        }
 
-    .high {
-        color: red;
-    }
-</style>
+        .high {
+            color: red;
+        }
+
+        .risk-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            color: white;
+        }
+
+        .risk-card.low {
+            background-color: green;
+        }
+
+        .risk-card.medium {
+            background-color: orange;
+        }
+
+        .risk-card.high {
+            background-color: red;
+        }
+
+        .risk-card h2 {
+            margin: 0;
+        }
+
+        .risk-card h1 {
+            margin: 10px 0 0 0;
+            font-size: 48px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .badge-critical {
+            background-color: red;
+        }
+
+        .badge-medium {
+            background-color: orange;
+        }
+
+        .badge-low {
+            background-color: green;
+        }
+
+        .form-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .form-card h2 {
+            margin-top: 0;
+        }
+
+        .form-card label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .form-card input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border
+    </style>
 </head>
 
 <body>
 
-<h1>SentraRisk Assessment</h1>
+    <h1>SentraRisk Assessment</h1>
 
-<label>
-    <input type="checkbox" id="https">
-    Uses HTTPS
-</label>
-<br>
+    <div class="form-card">
 
-<label>
-    <input type="checkbox" id="backup">
-    Has Backup
-</label>
-<br>
+        <h2>Website Assessment</h2>
 
-<label>
-    <input type="checkbox" id="plugins">
-    Uses Outdated Plugins
-</label>
-<br>
+        <label for="website">
+            Website
+        </label>
 
-<label>
-    <input type="checkbox" id="admin">
-    Uses Default Admin User
-</label>
-<br>
+        <input type="text" id="website" placeholder="example.com">
 
-<label>
-    <input type="checkbox" id="twofa">
-    Uses Two-Factor Authentication
-</label>
+        <label>
+            <input type="checkbox" id="https">
+            Uses HTTPS
+        </label>
 
-<br><br>
+        <label>
+            <input type="checkbox" id="backup">
+            Has Backup
+        </label>
 
-<button onclick="calculateRisk()">
-    Analyze
-</button>
+        <label>
+            <input type="checkbox" id="plugins">
+            Uses Outdated Plugins
+        </label>
 
-<hr>
+        <label>
+            <input type="checkbox" id="admin">
+            Uses Default Admin User
+        </label>
 
-<div id="result"></div>
+        <label>
+            <input type="checkbox" id="twofa">
+            Uses Two-Factor Authentication
+        </label>
 
-<script src="app.js"></script>
+        <br>
+
+        <button onclick="calculateRisk()">
+            Analyze
+        </button>
+
+    </div>
+
+    <hr>
+
+    <div id="result"></div>
+
+    <script src="app.js"></script>
 
 </body>
+
 </html>

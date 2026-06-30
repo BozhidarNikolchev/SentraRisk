@@ -59,9 +59,20 @@ namespace SentraRisk.Logic
             if (score > 100)
                 score = 100;
 
-            string level = score < 30 ? "Low"
-                         : score < 70 ? "Medium"
-                         : "High";
+            string level;
+
+            if (critical.Count > 0)
+            {
+                level = "High";
+            }
+            else if (score >= 30)
+            {
+                level = "Medium";
+            }
+            else
+            {
+                level = "Low";
+            }
 
             string summary;
 
