@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using SentraRisk.Models;
 using SentraRisk.Logic;
+using SentraRisk.Services;
 
 namespace SentraRisk.API.Controllers
 {
@@ -9,9 +10,15 @@ namespace SentraRisk.API.Controllers
     public class RiskController : ControllerBase
     {
         [HttpPost("calculate")]
-        public IActionResult Calculate([FromBody] WebsiteInput input)
+        public async Task<IActionResult> Calculate([FromBody] WebsiteInput input)
         {
+            var scanner = new WebsiteScanner();
+
+            input.UsesHttps =
+                await scanner.CheckHttpsAsync(input.WebsiteUrl);
+
             var calculator = new RiskCalculator();
+
             var result = calculator.Calculate(input);
 
             return Ok(result);

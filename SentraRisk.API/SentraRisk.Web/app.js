@@ -1,7 +1,8 @@
 async function calculateRisk() {
 
     const input = {
-        usesHttps: document.getElementById("https").checked,
+        websiteUrl: document.getElementById("website").value,
+
         hasBackup: document.getElementById("backup").checked,
         usesOutdatedPlugins: document.getElementById("plugins").checked,
         hasAdminUser: document.getElementById("admin").checked,
