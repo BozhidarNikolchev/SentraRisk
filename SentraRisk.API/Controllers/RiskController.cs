@@ -14,6 +14,9 @@ namespace SentraRisk.API.Controllers
         {
             var scanner = new WebsiteScanner();
 
+            input.IsReachable =
+                await scanner.IsReachableAsync(input.WebsiteUrl);
+
             input.UsesHttps =
                 await scanner.CheckHttpsAsync(input.WebsiteUrl);
 

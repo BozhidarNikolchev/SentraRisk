@@ -9,6 +9,34 @@ namespace SentraRisk.Logic
     {
         public RiskResult Calculate(WebsiteInput input)
         {
+            if (!input.IsReachable)
+            {
+                return new RiskResult
+                {
+                    Score = 0,
+                    RiskLevel = "Unavailable",
+
+                    CriticalIssues = new List<string>(),
+                    MediumIssues = new List<string>(),
+                    LowIssues = new List<string>(),
+
+                    Recommendations = new List<string>
+                    {
+                        "Verify the website URL.",
+                        "Ensure the website is online and accessible."
+                    },
+
+                    PriorityActions = new List<string>
+                    {
+                        "Fix website availability before performing a risk assessment."
+                    },
+
+                    Summary = "The website could not be reached. A full assessment could not be completed.",
+
+                    TopIssue = "Website unreachable"
+                };
+            }
+
             int score = 0;
 
             List<string> critical = new List<string>();
@@ -40,11 +68,8 @@ namespace SentraRisk.Logic
                   : low.Count > 0 ? low[0]
                   : "No major risks detected";
 
-
-            //  Remove duplicate recommendations
             recommendations = recommendations.Distinct().ToList();
 
-            //  Priority logic
             List<string> priority = new List<string>();
 
             if (critical.Count > 0)
@@ -92,7 +117,6 @@ namespace SentraRisk.Logic
             {
                 summary = "Your system is secure.";
             }
-
 
             return new RiskResult
             {
