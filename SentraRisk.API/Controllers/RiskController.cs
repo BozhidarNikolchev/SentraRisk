@@ -17,8 +17,19 @@ namespace SentraRisk.API.Controllers
             input.IsReachable =
                 await scanner.IsReachableAsync(input.WebsiteUrl);
 
-            input.UsesHttps =
-                await scanner.CheckHttpsAsync(input.WebsiteUrl);
+            if (input.IsReachable)
+            {
+                input.UsesHttps =
+                    await scanner.CheckHttpsAsync(input.WebsiteUrl);
+
+                input.RedirectsToHttps =
+                    await scanner.CheckHttpsRedirectAsync(
+                        input.WebsiteUrl);
+
+                input.SslInfo =
+                    await scanner.GetSslInfoAsync(
+                        input.WebsiteUrl);
+            }
 
             var calculator = new RiskCalculator();
 
