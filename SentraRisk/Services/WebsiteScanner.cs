@@ -121,9 +121,16 @@ namespace SentraRisk.Services
                 return new SslInfo
                 {
                     IsValid = expirationDate > DateTime.UtcNow,
+
                     ExpirationDate = expirationDate,
+
                     DaysRemaining =
-                        (expirationDate - DateTime.UtcNow).Days
+         (expirationDate - DateTime.UtcNow).Days,
+
+                    Issuer = certificate.Issuer,
+
+                    IsSelfSigned =
+         certificate.Subject == certificate.Issuer
                 };
             }
             catch

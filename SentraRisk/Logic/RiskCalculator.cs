@@ -39,10 +39,80 @@ namespace SentraRisk.Logic
 
             int score = 0;
 
-            List<string> critical = new List<string>();
-            List<string> medium = new List<string>();
-            List<string> low = new List<string>();
-            List<string> recommendations = new List<string>();
+            List<string> critical = new();
+            List<string> medium = new();
+            List<string> low = new();
+            List<string> recommendations = new();
+
+            string sslStatus = "";
+            string sslBusinessImpact = "";
+
+            if (input.SslInfo == null)
+            {
+                score += 50;
+
+                critical.Add("No SSL certificate detected");
+
+                recommendations.Add(
+                    "Install a valid SSL certificate immediately.");
+
+                sslStatus = "Missing";
+
+                sslBusinessImpact =
+                    "Visitors may see browser security warnings and lose trust in the website.";
+            }
+            else if (input.SslInfo.IsCritical)
+            {
+                score += 40;
+
+                critical.Add(
+                    $"SSL certificate expires in {input.SslInfo.DaysRemaining} days");
+
+                recommendations.Add(
+                    "Renew the SSL certificate immediately.");
+
+                sslStatus = "Critical";
+
+                sslBusinessImpact =
+                    "The website may soon display certificate warnings that can reduce customer trust and impact sales.";
+            }
+            else if (input.SslInfo.IsExpiringSoon)
+            {
+                score += 20;
+
+                medium.Add(
+                    $"SSL certificate expires in {input.SslInfo.DaysRemaining} days");
+
+                recommendations.Add(
+                    "Schedule SSL certificate renewal.");
+
+                sslStatus = "Expiring Soon";
+
+                sslBusinessImpact =
+                    "The certificate should be renewed soon to avoid service interruptions and security warnings.";
+            }
+            else
+            {
+                sslStatus = "Healthy";
+
+                sslBusinessImpact =
+                    "The SSL certificate is valid and does not currently present a business risk.";
+            }
+
+            if (input.SslInfo?.IsSelfSigned == true)
+            {
+                score += 30;
+
+                medium.Add("Self-signed SSL certificate detected");
+
+                recommendations.Add(
+                    "Use a certificate issued by a trusted certificate authority.");
+
+                sslStatus = "Self-Signed";
+
+                sslBusinessImpact =
+                    "Visitors may see browser security warnings because the certificate was not issued by a trusted authority.";
+            }
 
             var rules = RiskRules.GetAll();
 
@@ -63,14 +133,15 @@ namespace SentraRisk.Logic
                 }
             }
 
-            string topIssue = critical.Count > 0 ? critical[0]
-                  : medium.Count > 0 ? medium[0]
-                  : low.Count > 0 ? low[0]
-                  : "No major risks detected";
+            string topIssue =
+                critical.Count > 0 ? critical[0]
+                : medium.Count > 0 ? medium[0]
+                : low.Count > 0 ? low[0]
+                : "No major risks detected";
 
             recommendations = recommendations.Distinct().ToList();
 
-            List<string> priority = new List<string>();
+            List<string> priority = new();
 
             if (critical.Count > 0)
                 priority.Add("Fix critical security issues immediately");
@@ -128,7 +199,20 @@ namespace SentraRisk.Logic
                 Recommendations = recommendations,
                 PriorityActions = priority,
                 Summary = summary,
-                TopIssue = topIssue
+                TopIssue = topIssue,
+
+                HasSslCertificate = input.SslInfo != null,
+                IsSslValid = input.SslInfo?.IsValid ?? false,
+                SslExpirationDate = input.SslInfo?.ExpirationDate,
+                SslDaysRemaining = input.SslInfo?.DaysRemaining,
+
+                SslIssuer = input.SslInfo?.Issuer ?? "",
+
+                IsSslSelfSigned =
+        input.SslInfo?.IsSelfSigned ?? false,
+
+                SslStatus = sslStatus,
+                SslBusinessImpact = sslBusinessImpact
             };
         }
     }
