@@ -42,9 +42,11 @@ async function calculateRisk() {
         ${result.hasSslCertificate
             ? `
                 <p>
-                    <strong>Expiration Date:</strong>
-                    ${new Date(result.sslExpirationDate).toLocaleDateString()}
-                </p>
+    <strong>Expiration Date:</strong>
+    ${new Date(result.sslExpirationDate)
+                .toISOString()
+                .split("T")[0]}
+</p>
 
                 <p>
                     <strong>Days Remaining:</strong>

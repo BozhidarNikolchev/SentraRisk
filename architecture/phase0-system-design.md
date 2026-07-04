@@ -1,263 +1,408 @@
-# 🧱 Enterprise Compliance & Risk Management System
+# SentraRisk System Architecture
 
-## 👤 Author
-**Bozhidar Nikolchev**
+## Author
 
----
-
-# 🎯 1. Project Purpose
-
-Organizations must manage:
-
-- Risks (security, operational, compliance)
-- Controls (policies and safeguards)
-- Audits (verification of compliance)
-
-This system simulates an internal **GRC (Governance, Risk, Compliance) platform** used to:
-
-- Track risks
-- Map controls to risks
-- Enforce access control
-- Maintain audit trails
-- Provide visibility through dashboards
+Bozhidar Nikolchev
 
 ---
 
-# 🧠 2. Core Conceptual Model
+# 1. Project Purpose
 
-## 🔑 Main Entities
+SentraRisk is a commercial Website Risk Assessment Platform.
 
-### 1. User
-Represents a system user.
+The platform automatically analyzes public websites and translates technical findings into business-friendly explanations, risk assessments and remediation guidance.
 
-- Id
-- Username
-- PasswordHash
-- Role (Admin, Auditor, User)
+The goal is to help website owners understand:
 
----
+- What was checked
+- What was found
+- Why it matters
+- Business impact
+- How to fix issues
+- Where fixes should be applied
+- The most convenient solution path
 
-### 2. Risk
-Represents a potential issue affecting the organization.
+SentraRisk is not a penetration testing platform.
 
-- Id
-- Title
-- Description
-- Likelihood (1–5)
-- Impact (1–5)
-- Severity (calculated dynamically)
-- Status (Open / In Progress / Mitigated / Accepted)
-- CreatedBy
+SentraRisk is an automated website health and risk assessment platform.
 
 ---
 
-### 3. Control
-Represents a security or compliance measure.
+# 2. Product Vision
 
-Examples:
-- Access control policy
-- Encryption requirement
+User enters:
 
-Fields:
-- Id
-- Name
-- Description
-- Category
-
----
-
-### 4. Risk-Control Mapping
-Links risks to controls.
-
-- RiskId
-- ControlId
-
-Purpose:
-Shows how risks are mitigated using controls.
-
----
-
-### 5. Audit Log
-Tracks all important system actions.
-
-- Id
-- UserId
-- Action
-- EntityType
-- EntityId
-- Timestamp
+Website URL
 
 Example:
-"User X created Risk Y"
+
+https://example.com
+
+SentraRisk performs:
+
+- Website Reachability Analysis
+- HTTPS Analysis
+- SSL Certificate Analysis
+- Redirect Analysis
+- Security Headers Analysis
+- Technology Detection
+- SPF Analysis
+- DKIM Analysis
+- DMARC Analysis
+
+Results are translated into:
+
+- Risk Score
+- Risk Level
+- Business Explanations
+- Fix Instructions
+- Recommended Solutions
 
 ---
 
-### 6. Evidence
-Represents proof that a control is implemented.
+# 3. Core Workflow
 
-- Id
-- Description
-- RiskId (optional)
-- ControlId (optional)
-- CreatedBy
-- Timestamp
-
----
-
-# 🔐 3. Security Model
-
-## Role-Based Access Control (RBAC)
-
-### Admin
-- Full access
-- Manages users, risks, and controls
-
-### Auditor
-- Read-only access
-- Reviews compliance data
-
-### User
-- Creates and manages own risks
-- Limited access to system
+Website URL
+↓
+Scanner Layer
+↓
+Risk Engine
+↓
+Business Interpretation Layer
+↓
+Report Engine
+↓
+Client Assessment Report
 
 ---
 
-## Security Requirements
+# 4. Scanner Layer
 
-- Authentication (login system)
-- Authorization (role-based access)
-- Input validation
-- Audit logging
+The Scanner Layer collects technical information.
 
----
+Current metrics:
 
-# ⚙️ 4. System Architecture
+✅ Reachability
 
-## Layered Architecture
+✅ SSL Certificate Analysis
 
-### API Layer (Controllers)
-Handles HTTP requests.
+✅ HTTPS Analysis
 
-Examples:
-- POST /risks
-- GET /controls
+🔄 Redirect Analysis
 
----
+⬜ Security Headers
 
-### Service Layer (Business Logic)
-Contains system logic.
+⬜ Technology Detection
 
-Examples:
-- Risk severity calculation
-- Permission validation
+⬜ SPF
+
+⬜ DKIM
+
+⬜ DMARC
 
 ---
 
-### Data Layer (Database)
-Stores:
-
-- Users
-- Risks
-- Controls
-- Audit logs
-
----
-
-# 🔢 5. Core Logic
-
-## Risk Severity Calculation
-
-Severity = Likelihood × Impact
-
-Example:
-- Likelihood: 4  
-- Impact: 5  
-- Severity: 20 (High Risk)
-
----
-
-## Risk Lifecycle
-
-1. Create Risk  
-2. Assess Risk  
-3. Assign Controls  
-4. Update Status  
-5. Mitigate or Accept  
-
----
-
-# 📊 6. Dashboard Logic
-
-The system calculates:
-
-- Total risks
-- Open risks
-- Mitigated risks
-- High severity risks
-- Compliance percentage
-
-Compliance % = (Mitigated Risks / Total Risks) × 100
-
----
-
-# 🧾 7. Audit Logging
-
-Every important action is recorded.
-
-Examples:
-
-- CREATE_RISK
-- UPDATE_CONTROL
-- DELETE_USER
+# 5. Reachability Analysis
 
 Purpose:
 
-- Traceability
-- Accountability
-- Compliance
+Determine whether the website is accessible.
+
+Checks:
+
+- Website responds to requests
+- DNS resolution succeeds
+- Connection can be established
+
+Possible Outcomes:
+
+- Reachable
+- Unreachable
+
+If the website is unreachable:
+
+Assessment stops.
+
+SentraRisk does not generate findings that cannot be verified.
 
 ---
 
-# 🧱 8. Technology Stack
+# 6. SSL Certificate Analysis
 
-## Backend
-C# with ASP.NET Core
+Purpose:
 
-## Database
-SQLite
+Evaluate website trust certificate configuration.
 
-## Frontend
-Minimal UI (added later)
+Checks:
 
----
+- Certificate Present
+- Certificate Valid
+- Expiration Date
+- Days Remaining
+- Certificate Issuer
+- Self-Signed Detection
 
-# 🚀 9. Development Phases
+Output:
 
-## Phase 1
-- Database design
-- Risk CRUD
+- SSL Status
+- SSL Health
+- Business Impact
+- Recommendations
 
-## Phase 2
-- Authentication
-- Role-based access control
+Status:
 
-## Phase 3
-- Controls and mapping
-
-## Phase 4
-- Dashboard
-
-## Phase 5
-- Audit logging and improvements
+✅ Complete
 
 ---
 
-# 🎯 Final Goal
+# 7. HTTPS Analysis
 
-This project demonstrates:
+Purpose:
 
-- Secure backend design
-- Risk management logic
-- Role-based access control
-- Audit logging
-- Business-focused system architecture  
+Determine whether encrypted communication is used.
+
+Checks:
+
+- HTTPS Detection
+
+Output:
+
+- Status
+- Business Impact
+- Fix Instructions
+- Recommended Solution
+
+Status:
+
+✅ Complete
+
+---
+
+# 8. Redirect Analysis
+
+Purpose:
+
+Determine whether HTTP traffic is redirected to HTTPS.
+
+Checks:
+
+- HTTP → HTTPS Redirect
+
+Status:
+
+🔄 In Progress
+
+---
+
+# 9. Security Headers Analysis
+
+Purpose:
+
+Determine whether recommended security headers are configured.
+
+Future Checks:
+
+- Content-Security-Policy
+- Strict-Transport-Security
+- X-Frame-Options
+- X-Content-Type-Options
+- Referrer-Policy
+
+Status:
+
+⬜ Planned
+
+---
+
+# 10. Technology Detection
+
+Purpose:
+
+Identify technologies used by the website.
+
+Examples:
+
+- WordPress
+- ASP.NET
+- PHP
+- React
+- Angular
+
+Status:
+
+⬜ Planned
+
+---
+
+# 11. Email Security Analysis
+
+Purpose:
+
+Determine whether business email protection controls exist.
+
+Modules:
+
+- SPF
+- DKIM
+- DMARC
+
+Status:
+
+⬜ Planned
+
+---
+
+# 12. Risk Engine
+
+Purpose:
+
+Convert technical findings into risk ratings.
+
+Responsibilities:
+
+- Risk Scoring
+- Severity Classification
+- Issue Identification
+- Recommendation Generation
+- Priority Action Generation
+
+Output:
+
+- Score
+- Risk Level
+- Findings
+
+---
+
+# 13. Business Interpretation Layer
+
+Purpose:
+
+Translate technical results into language understandable by business owners.
+
+Every unhealthy finding must include:
+
+- What It Is
+- What Was Found
+- Why It Matters
+- Business Impact
+- How To Fix
+- Where To Fix
+- Most Convenient Solution
+
+Every healthy finding must include:
+
+- What Was Checked
+- What The Metric Is
+- Why It Matters
+- Current Healthy Status
+- Business Impact
+- Why No Action Is Required
+
+---
+
+# 14. Report Engine
+
+Purpose:
+
+Generate customer-facing assessment reports.
+
+Report Sections:
+
+- Executive Summary
+- Risk Score
+- Risk Level
+- Findings
+- Business Impact
+- Recommendations
+- Priority Actions
+
+---
+
+# 15. SentraRisk Product Rules
+
+Rule 1
+
+Finish each metric completely before moving to the next metric.
+
+Rule 2
+
+All findings must include client-friendly explanations.
+
+Rule 3
+
+All dates use:
+
+YYYY-MM-DD
+
+Example:
+
+2026-09-07
+
+Rule 4
+
+Never provide recommendations without explaining the issue first.
+
+Rule 5
+
+Prefer the most convenient solution for the client.
+
+Rule 6
+
+Do not generate findings that cannot be verified.
+
+Rule 7
+
+Healthy findings must still explain what was checked and why it matters.
+
+Rule 8
+
+Unreachable websites must receive professional troubleshooting guidance rather than generic errors.
+
+---
+
+# 16. Current Development Status
+
+Completed
+
+✅ Reachability Analysis
+
+✅ SSL Certificate Analysis
+
+✅ HTTPS Analysis
+
+In Progress
+
+🔄 Redirect Analysis
+
+Planned
+
+⬜ Security Headers
+
+⬜ Technology Detection
+
+⬜ SPF
+
+⬜ DKIM
+
+⬜ DMARC
+
+---
+
+# 17. Commercial Goal
+
+SentraRisk is a Website Risk Assessment SaaS.
+
+Primary Value:
+
+Translate technical website findings into business-friendly actions.
+
+Customer Outcome:
+
+Understand issues quickly.
+
+Prioritize risk.
+
+Fix problems efficiently.
+
+Improve website trust and security.
