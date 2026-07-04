@@ -47,6 +47,11 @@ namespace SentraRisk.Logic
             string sslStatus = "";
             string sslBusinessImpact = "";
 
+            string httpsStatus = "";
+            string httpsBusinessImpact = "";
+            string httpsFixInstructions = "";
+            string httpsRecommendedSolution = "";
+
             if (input.SslInfo == null)
             {
                 score += 50;
@@ -112,6 +117,44 @@ namespace SentraRisk.Logic
 
                 sslBusinessImpact =
                     "Visitors may see browser security warnings because the certificate was not issued by a trusted authority.";
+            }
+
+            if (!input.UsesHttps)
+            {
+                score += 50;
+
+                critical.Add("HTTPS is not enabled");
+
+                recommendations.Add(
+                    "Enable HTTPS and use a valid SSL certificate.");
+
+                httpsStatus = "Not Enabled";
+
+                httpsBusinessImpact =
+                    "Visitors may see browser security warnings and lose trust in the website. Data submitted through forms may not be adequately protected.";
+
+                httpsFixInstructions =
+                    "1. Contact your hosting provider.\n" +
+                    "2. Enable HTTPS.\n" +
+                    "3. Install a valid SSL certificate.\n" +
+                    "4. Redirect HTTP traffic to HTTPS.\n" +
+                    "5. Test the website after deployment.";
+
+                httpsRecommendedSolution =
+                    "Hosting Provider, Let's Encrypt, Cloudflare";
+            }
+            else
+            {
+                httpsStatus = "Enabled";
+
+                httpsBusinessImpact =
+                    "The website uses HTTPS and provides encrypted communication between visitors and the website.";
+
+                httpsFixInstructions =
+                    "No action required. HTTPS is configured correctly.";
+
+                httpsRecommendedSolution =
+                    "Current configuration appears healthy.";
             }
 
             var rules = RiskRules.GetAll();
@@ -212,7 +255,13 @@ namespace SentraRisk.Logic
         input.SslInfo?.IsSelfSigned ?? false,
 
                 SslStatus = sslStatus,
-                SslBusinessImpact = sslBusinessImpact
+                SslBusinessImpact = sslBusinessImpact,
+
+                HttpsStatus = httpsStatus,
+                HttpsBusinessImpact = httpsBusinessImpact,
+
+                HttpsFixInstructions = httpsFixInstructions,
+                HttpsRecommendedSolution = httpsRecommendedSolution
             };
         }
     }

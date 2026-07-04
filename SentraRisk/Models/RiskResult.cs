@@ -38,5 +38,13 @@ namespace SentraRisk.Models
         public string SslIssuer { get; set; } = "";
 
         public bool IsSslSelfSigned { get; set; }
+
+        public string HttpsStatus { get; set; } = "";
+
+        public string HttpsBusinessImpact { get; set; } = "";
+
+        public string HttpsFixInstructions { get; set; } = "";
+
+        public string HttpsRecommendedSolution { get; set; } = "";
     }
 }

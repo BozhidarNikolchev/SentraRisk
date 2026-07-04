@@ -52,14 +52,14 @@ async function calculateRisk() {
                 </p>
 
                 <p>
-    <strong>Issuer:</strong>
-    ${result.sslIssuer}
-</p>
+                    <strong>Issuer:</strong>
+                    ${result.sslIssuer}
+                </p>
 
-<p>
-    <strong>Self-Signed:</strong>
-    ${result.isSslSelfSigned ? "⚠️ Yes" : "✅ No"}
-</p>
+                <p>
+                    <strong>Self-Signed:</strong>
+                    ${result.isSslSelfSigned ? "⚠️ Yes" : "✅ No"}
+                </p>
 
                 <p>
                     <strong>SSL Health:</strong>
@@ -73,6 +73,28 @@ async function calculateRisk() {
             `
             : ""
         }
+
+        <h3>HTTPS</h3>
+
+<p>
+    <strong>Status:</strong>
+    ${result.httpsStatus}
+</p>
+
+<p>
+    <strong>Business Impact:</strong>
+    ${result.httpsBusinessImpact}
+</p>
+
+<p>
+    <strong>How To Fix:</strong><br>
+    ${result.httpsFixInstructions.replace(/\n/g, "<br>")}
+</p>
+
+<p>
+    <strong>Recommended Solution:</strong>
+    ${result.httpsRecommendedSolution}
+</p>
 
         <h3>Top Risk</h3>
         <p>${result.topIssue}</p>
