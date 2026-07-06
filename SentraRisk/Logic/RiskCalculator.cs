@@ -162,34 +162,33 @@ namespace SentraRisk.Logic
                     "Current configuration appears healthy.";
             }
 
-            if (input.UsesHttps && !input.RedirectsToHttps)
-            {
-                redirectStatus = "Redirect Missing";
-
-                redirectBusinessImpact =
-                    "Visitors may still access an unsecured version of the website, which can reduce trust and weaken the website's security posture.";
-
-                redirectFixInstructions =
-                    "1. Configure HTTP-to-HTTPS redirection.\n" +
-                    "2. Update web server settings.\n" +
-                    "3. Test redirection after deployment.\n" +
-                    "4. Ensure all visitors are forced onto HTTPS.";
-
-                redirectRecommendedSolution =
-                    "Cloudflare, Apache Redirect Rules, Nginx Redirect Rules, IIS URL Rewrite";
-            }
-            else if (input.UsesHttps && input.RedirectsToHttps)
+            if (input.UsesHttps)
             {
                 redirectStatus = "Healthy";
 
                 redirectBusinessImpact =
-                    "Visitors are automatically redirected to HTTPS, helping ensure secure encrypted connections.";
+                    "Visitors ultimately reach a secure HTTPS destination, helping ensure encrypted communication.";
 
                 redirectFixInstructions =
-                    "No action required. HTTPS redirection is configured correctly.";
+                    "No action required. Visitors are successfully reaching a secure HTTPS version of the website.";
 
                 redirectRecommendedSolution =
                     "Current configuration appears healthy.";
+            }
+            else
+            {
+                redirectStatus = "Redirect Missing";
+
+                redirectBusinessImpact =
+                    "Visitors may remain on an unencrypted HTTP connection.";
+
+                redirectFixInstructions =
+                    "1. Configure HTTP-to-HTTPS redirection.\n" +
+                    "2. Ensure visitors are directed to HTTPS.\n" +
+                    "3. Test after deployment.";
+
+                redirectRecommendedSolution =
+                    "Cloudflare, Apache Redirect Rules, Nginx Redirect Rules, IIS URL Rewrite";
             }
 
             var rules = RiskRules.GetAll();

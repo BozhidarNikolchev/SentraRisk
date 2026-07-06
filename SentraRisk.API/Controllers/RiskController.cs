@@ -12,6 +12,8 @@ namespace SentraRisk.API.Controllers
         [HttpPost("calculate")]
         public async Task<IActionResult> Calculate([FromBody] WebsiteInput input)
         {
+            input.WebsiteUrl = input.WebsiteUrl.Trim();
+
             var scanner = new WebsiteScanner();
 
             Console.WriteLine("CONTROLLER HIT");
@@ -62,6 +64,10 @@ namespace SentraRisk.API.Controllers
                 input.RedirectsToHttps =
                     await scanner.CheckHttpsRedirectAsync(
                         input.WebsiteUrl);
+
+                Console.WriteLine(
+"RedirectsToHttps: " +
+input.RedirectsToHttps);
 
                 input.SslInfo =
                     await scanner.GetSslInfoAsync(

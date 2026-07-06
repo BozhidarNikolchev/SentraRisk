@@ -12,10 +12,7 @@ namespace SentraRisk.Services
         {
             try
             {
-                if (!website.StartsWith("http"))
-                {
-                    website = "https://" + website;
-                }
+                website = NormalizeWebsite(website);
 
                 using var client = new HttpClient();
 
@@ -35,10 +32,7 @@ namespace SentraRisk.Services
         {
             try
             {
-                if (!website.StartsWith("http"))
-                {
-                    website = "https://" + website;
-                }
+                website = NormalizeWebsite(website);
 
                 using var client = new HttpClient();
 
@@ -58,24 +52,40 @@ namespace SentraRisk.Services
         {
             try
             {
-                website = website
-                    .Replace("https://", "")
-                    .Replace("http://", "");
+                website = NormalizeWebsite(website);
+
+                var host = new Uri(website).Host;
 
                 using var client = new HttpClient();
 
                 client.Timeout = TimeSpan.FromSeconds(10);
 
                 var response =
-                    await client.GetAsync($"http://{website}");
+                    await client.GetAsync($"http://{host}");
 
                 var finalUri =
                     response.RequestMessage?.RequestUri;
 
-                return finalUri?.Scheme == "https";
+                if (finalUri == null)
+                {
+                    return false;
+                }
+
+                Console.WriteLine("HTTP Redirect Test");
+                Console.WriteLine("Host: " + host);
+                Console.WriteLine("Final URI: " + finalUri);
+                Console.WriteLine("Final Scheme: " + finalUri.Scheme);
+
+                return finalUri.Scheme.Equals(
+                    "https",
+                    StringComparison.OrdinalIgnoreCase);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(
+                    "Redirect Check Error: " +
+                    ex.Message);
+
                 return false;
             }
         }
@@ -84,10 +94,9 @@ namespace SentraRisk.Services
         {
             try
             {
-                website = website
-                    .Replace("https://", "")
-                    .Replace("http://", "")
-                    .Split('/')[0];
+                website = NormalizeWebsite(website);
+
+                website = new Uri(website).Host;
 
                 using var client = new TcpClient();
 
@@ -135,10 +144,7 @@ namespace SentraRisk.Services
         {
             try
             {
-                if (!website.StartsWith("http"))
-                {
-                    website = "https://" + website;
-                }
+                website = NormalizeWebsite(website);
 
                 using var client = new HttpClient();
 
@@ -171,6 +177,22 @@ namespace SentraRisk.Services
             {
                 return null;
             }
+        }
+
+        private string NormalizeWebsite(string website)
+        {
+            website = website.Trim();
+
+            if (!website.StartsWith(
+                "http",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                website = "https://" + website;
+            }
+
+            website = website.ToLowerInvariant();
+
+            return website;
         }
     }
 }
