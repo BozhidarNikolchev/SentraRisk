@@ -14,6 +14,43 @@ namespace SentraRisk.API.Controllers
         {
             var scanner = new WebsiteScanner();
 
+            Console.WriteLine("CONTROLLER HIT");
+
+            var httpInfo =
+                await scanner.GetHttpScanInfoAsync(
+                    input.WebsiteUrl);
+
+            Console.WriteLine("HTTP INFO FINISHED");
+
+            if (httpInfo != null)
+            {
+                Console.WriteLine("===== HTTP SCAN =====");
+
+                Console.WriteLine(
+                    "Original URL: " +
+                    httpInfo.OriginalUrl);
+
+                Console.WriteLine(
+                    "Final URL: " +
+                    httpInfo.FinalUrl);
+
+                Console.WriteLine(
+                    "Status Code: " +
+                    httpInfo.StatusCode);
+
+                Console.WriteLine(
+                    "Uses HTTPS: " +
+                    httpInfo.UsesHttps);
+
+                Console.WriteLine(
+                    "Redirected: " +
+                    httpInfo.Redirected);
+            }
+            else
+            {
+                Console.WriteLine("HTTP INFO IS NULL");
+            }
+
             input.IsReachable =
                 await scanner.IsReachableAsync(input.WebsiteUrl);
 

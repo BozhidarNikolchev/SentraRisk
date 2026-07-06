@@ -52,6 +52,11 @@ namespace SentraRisk.Logic
             string httpsFixInstructions = "";
             string httpsRecommendedSolution = "";
 
+            string redirectStatus = "";
+            string redirectBusinessImpact = "";
+            string redirectFixInstructions = "";
+            string redirectRecommendedSolution = "";
+
             if (input.SslInfo == null)
             {
                 score += 50;
@@ -154,6 +159,36 @@ namespace SentraRisk.Logic
                     "No action required. HTTPS is configured correctly.";
 
                 httpsRecommendedSolution =
+                    "Current configuration appears healthy.";
+            }
+
+            if (input.UsesHttps && !input.RedirectsToHttps)
+            {
+                redirectStatus = "Redirect Missing";
+
+                redirectBusinessImpact =
+                    "Visitors may still access an unsecured version of the website, which can reduce trust and weaken the website's security posture.";
+
+                redirectFixInstructions =
+                    "1. Configure HTTP-to-HTTPS redirection.\n" +
+                    "2. Update web server settings.\n" +
+                    "3. Test redirection after deployment.\n" +
+                    "4. Ensure all visitors are forced onto HTTPS.";
+
+                redirectRecommendedSolution =
+                    "Cloudflare, Apache Redirect Rules, Nginx Redirect Rules, IIS URL Rewrite";
+            }
+            else if (input.UsesHttps && input.RedirectsToHttps)
+            {
+                redirectStatus = "Healthy";
+
+                redirectBusinessImpact =
+                    "Visitors are automatically redirected to HTTPS, helping ensure secure encrypted connections.";
+
+                redirectFixInstructions =
+                    "No action required. HTTPS redirection is configured correctly.";
+
+                redirectRecommendedSolution =
                     "Current configuration appears healthy.";
             }
 
@@ -261,7 +296,13 @@ namespace SentraRisk.Logic
                 HttpsBusinessImpact = httpsBusinessImpact,
 
                 HttpsFixInstructions = httpsFixInstructions,
-                HttpsRecommendedSolution = httpsRecommendedSolution
+                HttpsRecommendedSolution = httpsRecommendedSolution,
+
+                RedirectStatus = redirectStatus,
+                RedirectBusinessImpact = redirectBusinessImpact,
+
+                RedirectFixInstructions = redirectFixInstructions,
+                RedirectRecommendedSolution = redirectRecommendedSolution
             };
         }
     }

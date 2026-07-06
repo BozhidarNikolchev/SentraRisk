@@ -23,7 +23,7 @@ namespace SentraRisk.Services
 
                 var response = await client.GetAsync(website);
 
-                return response.IsSuccessStatusCode;
+                return true;
             }
             catch
             {
@@ -62,25 +62,17 @@ namespace SentraRisk.Services
                     .Replace("https://", "")
                     .Replace("http://", "");
 
-                using var client = new HttpClient(
-                    new HttpClientHandler
-                    {
-                        AllowAutoRedirect = false
-                    });
+                using var client = new HttpClient();
 
                 client.Timeout = TimeSpan.FromSeconds(10);
 
                 var response =
                     await client.GetAsync($"http://{website}");
 
-                if (response.Headers.Location != null)
-                {
-                    return response.Headers.Location
-                        .ToString()
-                        .StartsWith("https://");
-                }
+                var finalUri =
+                    response.RequestMessage?.RequestUri;
 
-                return false;
+                return finalUri?.Scheme == "https";
             }
             catch
             {
@@ -131,6 +123,48 @@ namespace SentraRisk.Services
 
                     IsSelfSigned =
          certificate.Subject == certificate.Issuer
+                };
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        public async Task<HttpScanInfo?> GetHttpScanInfoAsync(string website)
+        {
+            try
+            {
+                if (!website.StartsWith("http"))
+                {
+                    website = "https://" + website;
+                }
+
+                using var client = new HttpClient();
+
+                client.Timeout = TimeSpan.FromSeconds(10);
+
+                var response =
+                    await client.GetAsync(website);
+
+                var finalUri =
+                    response.RequestMessage?.RequestUri;
+
+                return new HttpScanInfo
+                {
+                    OriginalUrl = website,
+
+                    FinalUrl =
+                        finalUri?.ToString() ?? "",
+
+                    StatusCode =
+                        (int)response.StatusCode,
+
+                    UsesHttps =
+                        finalUri?.Scheme == "https",
+
+                    Redirected =
+                        website != finalUri?.ToString()
                 };
             }
             catch

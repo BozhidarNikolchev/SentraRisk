@@ -46,5 +46,13 @@ namespace SentraRisk.Models
         public string HttpsFixInstructions { get; set; } = "";
 
         public string HttpsRecommendedSolution { get; set; } = "";
+
+        public string RedirectStatus { get; set; } = "";
+
+        public string RedirectBusinessImpact { get; set; } = "";
+
+        public string RedirectFixInstructions { get; set; } = "";
+
+        public string RedirectRecommendedSolution { get; set; } = "";
     }
 }

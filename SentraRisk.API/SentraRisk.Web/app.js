@@ -76,27 +76,77 @@ async function calculateRisk() {
             : ""
         }
 
-        <h3>HTTPS</h3>
+       <div class="assessment-card">
 
-<p>
-    <strong>Status:</strong>
-    ${result.httpsStatus}
-</p>
+    <h3>🔒 HTTPS Assessment</h3>
 
-<p>
-    <strong>Business Impact:</strong>
-    ${result.httpsBusinessImpact}
-</p>
+    <p>
+        <strong>Status:</strong>
+        ${result.httpsStatus}
+    </p>
 
-<p>
-    <strong>How To Fix:</strong><br>
-    ${result.httpsFixInstructions.replace(/\n/g, "<br>")}
-</p>
+    <p>
+        <strong>What Is This?</strong><br>
+        HTTPS encrypts communications between website visitors and the website.
+    </p>
 
-<p>
-    <strong>Recommended Solution:</strong>
-    ${result.httpsRecommendedSolution}
-</p>
+    <p>
+        <strong>What Was Checked?</strong><br>
+        SentraRisk checked whether encrypted HTTPS connections are enabled and available.
+    </p>
+
+    <p>
+        <strong>Business Impact:</strong><br>
+        ${result.httpsBusinessImpact}
+    </p>
+
+    <p>
+        <strong>How To Fix:</strong><br>
+        ${result.httpsFixInstructions.replace(/\n/g, "<br>")}
+    </p>
+
+    <p>
+        <strong>Recommended Solution:</strong><br>
+        ${result.httpsRecommendedSolution}
+    </p>
+
+</div>
+
+<div class="assessment-card">
+
+    <h3>🔄 Redirect Assessment</h3>
+
+    <p>
+        <strong>Status:</strong>
+        ${result.redirectStatus}
+    </p>
+
+    <p>
+        <strong>What Is This?</strong><br>
+        An HTTP-to-HTTPS redirect automatically sends visitors from an unsecured HTTP connection to a secure HTTPS connection.
+    </p>
+
+    <p>
+        <strong>What Was Checked?</strong><br>
+        SentraRisk tested whether visitors accessing the website through HTTP are automatically redirected to HTTPS.
+    </p>
+
+    <p>
+        <strong>Business Impact:</strong><br>
+        ${result.redirectBusinessImpact}
+    </p>
+
+    <p>
+        <strong>How To Fix:</strong><br>
+        ${result.redirectFixInstructions.replace(/\n/g, "<br>")}
+    </p>
+
+    <p>
+        <strong>Recommended Solution:</strong><br>
+        ${result.redirectRecommendedSolution}
+    </p>
+
+</div>
 
         <h3>Top Risk</h3>
         <p>${result.topIssue}</p>

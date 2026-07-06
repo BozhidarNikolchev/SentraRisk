@@ -17,6 +17,22 @@ namespace SentraRisk.Rules
                     Recommendation = "Enable HTTPS immediately to protect data",
                     Severity = "Critical"
                 },
+
+                new RiskRule
+                {
+                    Condition = input =>
+                        input.UsesHttps &&
+                        !input.RedirectsToHttps,
+
+                    ScoreImpact = 10,
+
+                    Issue = "HTTP visitors are not automatically redirected to HTTPS",
+
+                    Recommendation = "Configure automatic HTTP-to-HTTPS redirection",
+
+                    Severity = "Medium"
+                },
+
                 new RiskRule
                 {
                     Condition = input => input.UsesOutdatedPlugins,
@@ -25,6 +41,7 @@ namespace SentraRisk.Rules
                     Recommendation = "Update all plugins to avoid vulnerabilities",
                     Severity = "Critical"
                 },
+
                 new RiskRule
                 {
                     Condition = input => !input.HasBackup,
@@ -33,6 +50,7 @@ namespace SentraRisk.Rules
                     Recommendation = "Set up automatic backups",
                     Severity = "Medium"
                 },
+
                 new RiskRule
                 {
                     Condition = input => input.HasAdminUser,
@@ -41,6 +59,7 @@ namespace SentraRisk.Rules
                     Recommendation = "Change admin username for security",
                     Severity = "Medium"
                 },
+
                 new RiskRule
                 {
                     Condition = input => !input.HasTwoFactorAuth,
