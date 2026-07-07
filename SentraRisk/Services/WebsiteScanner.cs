@@ -134,8 +134,12 @@ namespace SentraRisk.Services
          certificate.Subject == certificate.Issuer
                 };
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(
+                    "SSL ERROR: " +
+                    ex.Message);
+
                 return null;
             }
         }
@@ -173,8 +177,12 @@ namespace SentraRisk.Services
                         website != finalUri?.ToString()
                 };
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine(
+                    "HTTP SCAN ERROR: " +
+                    ex.Message);
+
                 return null;
             }
         }
