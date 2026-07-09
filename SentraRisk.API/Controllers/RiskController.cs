@@ -24,6 +24,83 @@ namespace SentraRisk.API.Controllers
 
             Console.WriteLine("HTTP INFO FINISHED");
 
+            var securityHeaders =
+    await scanner.GetSecurityHeadersAsync(
+        input.WebsiteUrl);
+
+            var hstsEnabled =
+        scanner.CheckHsts(
+            securityHeaders);
+
+            Console.WriteLine(
+                "HSTS ENABLED: " +
+                hstsEnabled);
+
+            var xFrameProtected =
+scanner.CheckXFrameOptions(
+    securityHeaders);
+
+            Console.WriteLine(
+                "X-FRAME PROTECTED: " +
+                xFrameProtected);
+
+            var contentTypeProtected =
+scanner.CheckContentTypeProtection(
+    securityHeaders);
+
+            Console.WriteLine(
+                "CONTENT-TYPE PROTECTED: " +
+                contentTypeProtected);
+
+            var referrerProtected =
+scanner.CheckReferrerPolicy(
+    securityHeaders);
+
+            Console.WriteLine(
+                "REFERRER POLICY ENABLED: " +
+                referrerProtected);
+
+            var cspEnabled =
+scanner.CheckCsp(
+    securityHeaders);
+
+            Console.WriteLine(
+                "CSP ENABLED: " +
+                cspEnabled);
+
+            var permissionsEnabled =
+scanner.CheckPermissionsPolicy(
+    securityHeaders);
+
+            Console.WriteLine(
+                "PERMISSIONS POLICY ENABLED: " +
+                permissionsEnabled);
+
+            var coopEnabled =
+scanner.CheckCoop(
+    securityHeaders);
+
+            Console.WriteLine(
+                "COOP ENABLED: " +
+                coopEnabled);
+
+            var corpEnabled =
+scanner.CheckCorp(
+    securityHeaders);
+
+            Console.WriteLine(
+                "CORP ENABLED: " +
+                corpEnabled);
+
+
+            Console.WriteLine("===== SECURITY HEADERS =====");
+
+            foreach (var header in securityHeaders)
+            {
+                Console.WriteLine(
+                    $"{header.Key}: {header.Value}");
+            }
+
             if (httpInfo != null)
             {
                 Console.WriteLine("===== HTTP SCAN =====");
@@ -55,6 +132,10 @@ namespace SentraRisk.API.Controllers
 
             input.IsReachable =
                 await scanner.IsReachableAsync(input.WebsiteUrl);
+
+            Console.WriteLine(
+"IS REACHABLE: " +
+input.IsReachable);
 
             if (input.IsReachable)
             {

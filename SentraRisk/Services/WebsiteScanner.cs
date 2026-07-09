@@ -14,27 +14,46 @@ namespace SentraRisk.Services
             {
                 website = NormalizeWebsite(website);
 
-                using var client = new HttpClient();
+                var host = new Uri(website).Host;
 
-                client.Timeout = TimeSpan.FromSeconds(10);
+                using var client = new TcpClient();
 
-                var response = await client.GetAsync(website);
+                var connectTask =
+                    client.ConnectAsync(host, 443);
 
-                return true;
+                var timeoutTask =
+                    Task.Delay(5000);
+
+                var completedTask =
+                    await Task.WhenAny(
+                        connectTask,
+                        timeoutTask);
+
+                if (completedTask == timeoutTask)
+                {
+                    return false;
+                }
+
+                return client.Connected;
             }
             catch
             {
                 return false;
             }
         }
-
         public async Task<bool> CheckHttpsAsync(string website)
         {
             try
             {
                 website = NormalizeWebsite(website);
 
-                using var client = new HttpClient();
+                var handler = new HttpClientHandler();
+
+                handler.ServerCertificateCustomValidationCallback =
+                    (message, cert, chain, errors) => true;
+
+                using var client =
+                    new HttpClient(handler);
 
                 client.Timeout = TimeSpan.FromSeconds(10);
 
@@ -56,7 +75,13 @@ namespace SentraRisk.Services
 
                 var host = new Uri(website).Host;
 
-                using var client = new HttpClient();
+                var handler = new HttpClientHandler();
+
+                handler.ServerCertificateCustomValidationCallback =
+                    (message, cert, chain, errors) => true;
+
+                using var client =
+                    new HttpClient(handler);
 
                 client.Timeout = TimeSpan.FromSeconds(10);
 
@@ -115,23 +140,33 @@ namespace SentraRisk.Services
                 }
 
                 var certificate =
-                    new X509Certificate2(sslStream.RemoteCertificate);
+                    new X509Certificate2(
+                        sslStream.RemoteCertificate);
 
-                var expirationDate = certificate.NotAfter;
+                var chain = new X509Chain();
+
+                var chainTrusted =
+                    chain.Build(certificate);
+
+                var expirationDate =
+                    certificate.NotAfter;
 
                 return new SslInfo
                 {
-                    IsValid = expirationDate > DateTime.UtcNow,
+                    // PRIMARY TRUST METRIC
+                    IsValid = chainTrusted,
 
+                    // SUPPORTING EVIDENCE
                     ExpirationDate = expirationDate,
 
                     DaysRemaining =
-         (expirationDate - DateTime.UtcNow).Days,
+                        (expirationDate - DateTime.UtcNow).Days,
 
                     Issuer = certificate.Issuer,
 
                     IsSelfSigned =
-         certificate.Subject == certificate.Issuer
+                        certificate.Subject ==
+                        certificate.Issuer
                 };
             }
             catch (Exception ex)
@@ -143,14 +178,19 @@ namespace SentraRisk.Services
                 return null;
             }
         }
-
         public async Task<HttpScanInfo?> GetHttpScanInfoAsync(string website)
         {
             try
             {
                 website = NormalizeWebsite(website);
 
-                using var client = new HttpClient();
+                var handler = new HttpClientHandler();
+
+                handler.ServerCertificateCustomValidationCallback =
+                    (message, cert, chain, errors) => true;
+
+                using var client =
+                    new HttpClient(handler);
 
                 client.Timeout = TimeSpan.FromSeconds(10);
 
@@ -201,6 +241,144 @@ namespace SentraRisk.Services
             website = website.ToLowerInvariant();
 
             return website;
+        }
+
+        public async Task<Dictionary<string, string>> GetSecurityHeadersAsync(string website)
+        {
+            try
+            {
+                website = NormalizeWebsite(website);
+
+                var handler = new HttpClientHandler();
+
+                handler.ServerCertificateCustomValidationCallback =
+                    (message, cert, chain, errors) => true;
+
+                using var client =
+                    new HttpClient(handler);
+
+                client.Timeout =
+                    TimeSpan.FromSeconds(10);
+
+                var response =
+                    await client.GetAsync(website);
+
+                var headers =
+                    new Dictionary<string, string>();
+
+                foreach (var header in response.Headers)
+                {
+                    headers[header.Key] =
+                        string.Join(", ", header.Value);
+                }
+
+                foreach (var header in response.Content.Headers)
+                {
+                    headers[header.Key] =
+                        string.Join(", ", header.Value);
+                }
+
+                return headers;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "SECURITY HEADERS ERROR: " +
+                    ex.Message);
+
+                return new Dictionary<string, string>();
+            }
+        }
+
+        public bool CheckHsts(Dictionary<string, string> headers)
+        {
+            if (!headers.TryGetValue(
+                "Strict-Transport-Security",
+                out var hsts))
+            {
+                return false;
+            }
+
+            return hsts.Contains(
+                "max-age=",
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool CheckXFrameOptions(
+    Dictionary<string, string> headers)
+        {
+            if (!headers.TryGetValue(
+                "X-Frame-Options",
+                out var value))
+            {
+                return false;
+            }
+
+            value = value.Trim();
+
+            return value.Equals(
+                       "DENY",
+                       StringComparison.OrdinalIgnoreCase)
+                   ||
+                   value.Equals(
+                       "SAMEORIGIN",
+                       StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool CheckContentTypeProtection(
+    Dictionary<string, string> headers)
+        {
+            if (!headers.TryGetValue(
+                "X-Content-Type-Options",
+                out var value))
+            {
+                return false;
+            }
+
+            return value.Equals(
+                "nosniff",
+                StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool CheckReferrerPolicy(
+    Dictionary<string, string> headers)
+        {
+            if (!headers.TryGetValue(
+                "Referrer-Policy",
+                out var value))
+            {
+                return false;
+            }
+
+            return !string.IsNullOrWhiteSpace(value);
+        }
+
+        public bool CheckCsp(
+    Dictionary<string, string> headers)
+        {
+            return headers.ContainsKey(
+                "Content-Security-Policy");
+        }
+
+        public bool CheckPermissionsPolicy(
+    Dictionary<string, string> headers)
+        {
+            return headers.ContainsKey(
+                "Permissions-Policy");
+        }
+
+        public bool CheckCoop(
+    Dictionary<string, string> headers)
+        {
+            return headers.ContainsKey(
+                "Cross-Origin-Opener-Policy");
+        }
+
+        public bool CheckCorp(
+    Dictionary<string, string> headers)
+        {
+            return headers.ContainsKey(
+                "Cross-Origin-Resource-Policy");
         }
     }
 }
