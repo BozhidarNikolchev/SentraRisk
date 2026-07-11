@@ -24,6 +24,73 @@ namespace SentraRisk.API.Controllers
 
             Console.WriteLine("HTTP INFO FINISHED");
 
+            var technologyEvidence =
+    await scanner.GetTechnologyEvidenceAsync(
+        input.WebsiteUrl);
+
+            var technologies =
+        scanner.DetectTechnologies(
+            technologyEvidence);
+
+            Console.WriteLine();
+            Console.WriteLine(
+                "===== TECHNOLOGY EVIDENCE =====");
+
+            Console.WriteLine(
+"CLOUDFLARE DETECTED: " +
+technologies.CloudflareDetected);
+
+            Console.WriteLine(
+                "WORDPRESS DETECTED: " +
+                technologies.WordPressDetected);
+
+            Console.WriteLine(
+                "SHOPIFY DETECTED: " +
+                technologies.ShopifyDetected);
+
+            Console.WriteLine(
+"HEADER COUNT: " +
+technologyEvidence.Headers.Count);
+
+            Console.WriteLine(
+                "HTML LENGTH: " +
+                technologyEvidence.Html.Length);
+
+            Console.WriteLine(
+                "COOKIE COUNT: " +
+                technologyEvidence.Cookies.Count);
+
+            foreach (var header in
+             technologyEvidence.Headers)
+            {
+                Console.WriteLine(
+                    $"{header.Key}: {header.Value}");
+            }
+
+            if (technologyEvidence.Html.Contains(
+    "wp-content",
+    StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine(
+                    "FOUND: wp-content");
+            }
+
+            if (technologyEvidence.Html.Contains(
+                "wp-includes",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine(
+                    "FOUND: wp-includes");
+            }
+
+            if (technologyEvidence.Html.Contains(
+                "shopify",
+                StringComparison.OrdinalIgnoreCase))
+            {
+                Console.WriteLine(
+                    "FOUND: shopify");
+            }
+
             var securityHeaders =
     await scanner.GetSecurityHeadersAsync(
         input.WebsiteUrl);
@@ -93,7 +160,9 @@ scanner.CheckCorp(
                 corpEnabled);
 
 
-            Console.WriteLine("===== SECURITY HEADERS =====");
+            Console.WriteLine();
+            Console.WriteLine(
+                "===== SECURITY HEADERS =====");
 
             foreach (var header in securityHeaders)
             {

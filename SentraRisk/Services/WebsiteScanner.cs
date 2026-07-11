@@ -290,6 +290,66 @@ namespace SentraRisk.Services
             }
         }
 
+        public async Task<TechnologyEvidence>
+    GetTechnologyEvidenceAsync(string website)
+        {
+            var evidence =
+                new TechnologyEvidence();
+
+            try
+            {
+                website = NormalizeWebsite(website);
+
+                var handler =
+                    new HttpClientHandler();
+
+                handler.ServerCertificateCustomValidationCallback =
+                    (message, cert, chain, errors) => true;
+
+                using var client =
+                    new HttpClient(handler);
+
+                client.Timeout =
+                    TimeSpan.FromSeconds(10);
+
+                var response =
+                    await client.GetAsync(website);
+
+                foreach (var header in response.Headers)
+                {
+                    evidence.Headers[header.Key] =
+                        string.Join(", ", header.Value);
+                }
+
+                foreach (var header in response.Content.Headers)
+                {
+                    evidence.Headers[header.Key] =
+                        string.Join(", ", header.Value);
+                }
+
+                evidence.Html =
+                    await response.Content.ReadAsStringAsync();
+
+                if (response.Headers.TryGetValues(
+                    "Set-Cookie",
+                    out var cookies))
+                {
+                    evidence.Cookies.AddRange(
+                        cookies);
+                }
+
+                return evidence;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "TECHNOLOGY EVIDENCE ERROR: "
+                    + ex.Message);
+
+                return evidence;
+            }
+        }
+
         public bool CheckHsts(Dictionary<string, string> headers)
         {
             if (!headers.TryGetValue(
@@ -379,6 +439,55 @@ namespace SentraRisk.Services
         {
             return headers.ContainsKey(
                 "Cross-Origin-Resource-Policy");
+        }
+
+        public TechnologyDetectionResult DetectTechnologies(
+            TechnologyEvidence evidence)
+        {
+            var result =
+                new TechnologyDetectionResult();
+
+            //
+            // CLOUDFLARE
+            //
+            result.CloudflareDetected =
+                evidence.Headers.ContainsKey("CF-RAY")
+                ||
+                (
+                    evidence.Headers.TryGetValue(
+                        "Server",
+                        out var server)
+                    &&
+                    server.Contains(
+                        "cloudflare",
+                        StringComparison.OrdinalIgnoreCase)
+                );
+
+            //
+            // WORDPRESS
+            //
+            result.WordPressDetected =
+                evidence.Html.Contains(
+                    "wp-content",
+                    StringComparison.OrdinalIgnoreCase)
+                ||
+                evidence.Html.Contains(
+                    "wp-includes",
+                    StringComparison.OrdinalIgnoreCase);
+
+            //
+            // SHOPIFY
+            //
+            result.ShopifyDetected =
+                evidence.Headers.TryGetValue(
+                    "Set-Cookie",
+                    out var cookieHeader)
+                &&
+                cookieHeader.Contains(
+                    "_shopify_",
+                    StringComparison.OrdinalIgnoreCase);
+
+            return result;
         }
     }
 }
