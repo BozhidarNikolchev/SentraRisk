@@ -87,29 +87,6 @@ technologyEvidence.Headers.Count);
                     $"{header.Key}: {header.Value}");
             }
 
-            if (technologyEvidence.Html.Contains(
-    "wp-content",
-    StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine(
-                    "FOUND: wp-content");
-            }
-
-            if (technologyEvidence.Html.Contains(
-                "wp-includes",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine(
-                    "FOUND: wp-includes");
-            }
-
-            if (technologyEvidence.Html.Contains(
-                "shopify",
-                StringComparison.OrdinalIgnoreCase))
-            {
-                Console.WriteLine(
-                    "FOUND: shopify");
-            }
 
             var securityHeaders =
     await scanner.GetSecurityHeadersAsync(
