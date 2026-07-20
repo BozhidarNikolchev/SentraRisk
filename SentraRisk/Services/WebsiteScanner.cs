@@ -442,14 +442,11 @@ namespace SentraRisk.Services
         }
 
         public TechnologyDetectionResult DetectTechnologies(
-            TechnologyEvidence evidence)
+    TechnologyEvidence evidence)
         {
             var result =
                 new TechnologyDetectionResult();
 
-            //
-            // CLOUDFLARE
-            //
             result.CloudflareDetected =
                 evidence.Headers.ContainsKey("CF-RAY")
                 ||
@@ -463,9 +460,6 @@ namespace SentraRisk.Services
                         StringComparison.OrdinalIgnoreCase)
                 );
 
-            //
-            // WORDPRESS
-            //
             result.WordPressDetected =
                 evidence.Html.Contains(
                     "wp-content",
@@ -475,9 +469,6 @@ namespace SentraRisk.Services
                     "wp-includes",
                     StringComparison.OrdinalIgnoreCase);
 
-            //
-            // SHOPIFY
-            //
             result.ShopifyDetected =
                 evidence.Headers.TryGetValue(
                     "Set-Cookie",
@@ -485,6 +476,56 @@ namespace SentraRisk.Services
                 &&
                 cookieHeader.Contains(
                     "_shopify_",
+                    StringComparison.OrdinalIgnoreCase);
+
+            result.NginxDetected =
+                evidence.Headers.TryGetValue(
+                    "Server",
+                    out var nginxServer)
+                &&
+                nginxServer.Contains(
+                    "nginx",
+                    StringComparison.OrdinalIgnoreCase);
+
+            result.ApacheDetected =
+                evidence.Headers.TryGetValue(
+                    "Server",
+                    out var apacheServer)
+                &&
+                apacheServer.Contains(
+                    "apache",
+                    StringComparison.OrdinalIgnoreCase);
+
+            result.IisDetected =
+                evidence.Headers.TryGetValue(
+                    "Server",
+                    out var iisServer)
+                &&
+                iisServer.Contains(
+                    "iis",
+                    StringComparison.OrdinalIgnoreCase);
+
+            result.AspNetDetected =
+                evidence.Headers.ContainsKey(
+                    "X-AspNet-Version")
+                ||
+                (
+                    evidence.Headers.TryGetValue(
+                        "Set-Cookie",
+                        out var aspNetCookie)
+                    &&
+                    aspNetCookie.Contains(
+                        "ASP.NET",
+                        StringComparison.OrdinalIgnoreCase)
+                );
+
+            result.PhpDetected =
+                evidence.Headers.TryGetValue(
+                    "X-Powered-By",
+                    out var poweredBy)
+                &&
+                poweredBy.Contains(
+                    "php",
                     StringComparison.OrdinalIgnoreCase);
 
             return result;

@@ -49,6 +49,26 @@ technologies.CloudflareDetected);
                 technologies.ShopifyDetected);
 
             Console.WriteLine(
+"NGINX DETECTED: " +
+technologies.NginxDetected);
+
+            Console.WriteLine(
+                "APACHE DETECTED: " +
+                technologies.ApacheDetected);
+
+            Console.WriteLine(
+                "IIS DETECTED: " +
+                technologies.IisDetected);
+
+            Console.WriteLine(
+                "ASP.NET DETECTED: " +
+                technologies.AspNetDetected);
+
+            Console.WriteLine(
+                "PHP DETECTED: " +
+                technologies.PhpDetected);
+
+            Console.WriteLine(
 "HEADER COUNT: " +
 technologyEvidence.Headers.Count);
 
