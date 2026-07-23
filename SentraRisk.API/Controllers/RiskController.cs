@@ -87,6 +87,39 @@ technologyEvidence.Headers.Count);
                     $"{header.Key}: {header.Value}");
             }
 
+            var spfResult =
+    await scanner.CheckSpfAsync(
+        input.WebsiteUrl);
+
+            Console.WriteLine();
+            Console.WriteLine(
+                "===== SPF =====");
+
+            Console.WriteLine(
+                "SPF DETECTED: " +
+                spfResult.SpfDetected);
+
+            Console.WriteLine(
+                "SPF RECORD: " +
+                spfResult.SpfRecord);
+
+
+            var dmarcResult =
+                await scanner.CheckDmarcAsync(
+                    input.WebsiteUrl);
+
+            Console.WriteLine();
+            Console.WriteLine(
+                "===== DMARC =====");
+
+            Console.WriteLine(
+                "DMARC DETECTED: " +
+                dmarcResult.DmarcDetected);
+
+            Console.WriteLine(
+                "DMARC RECORD: " +
+                dmarcResult.DmarcRecord);
+
 
             var securityHeaders =
     await scanner.GetSecurityHeadersAsync(

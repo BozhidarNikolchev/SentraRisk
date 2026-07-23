@@ -3,6 +3,7 @@ using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
 using SentraRisk.Models;
+using DnsClient;
 
 namespace SentraRisk.Services
 {
@@ -41,6 +42,8 @@ namespace SentraRisk.Services
                 return false;
             }
         }
+
+
         public async Task<bool> CheckHttpsAsync(string website)
         {
             try
@@ -66,6 +69,8 @@ namespace SentraRisk.Services
                 return false;
             }
         }
+
+
 
         public async Task<bool> CheckHttpsRedirectAsync(string website)
         {
@@ -114,6 +119,8 @@ namespace SentraRisk.Services
                 return false;
             }
         }
+
+
 
         public async Task<SslInfo?> GetSslInfoAsync(string website)
         {
@@ -178,6 +185,8 @@ namespace SentraRisk.Services
                 return null;
             }
         }
+
+
         public async Task<HttpScanInfo?> GetHttpScanInfoAsync(string website)
         {
             try
@@ -227,6 +236,8 @@ namespace SentraRisk.Services
             }
         }
 
+
+
         private string NormalizeWebsite(string website)
         {
             website = website.Trim();
@@ -242,6 +253,8 @@ namespace SentraRisk.Services
 
             return website;
         }
+
+
 
         public async Task<Dictionary<string, string>> GetSecurityHeadersAsync(string website)
         {
@@ -289,6 +302,8 @@ namespace SentraRisk.Services
                 return new Dictionary<string, string>();
             }
         }
+
+
 
         public async Task<TechnologyEvidence>
     GetTechnologyEvidenceAsync(string website)
@@ -350,6 +365,7 @@ namespace SentraRisk.Services
             }
         }
 
+
         public bool CheckHsts(Dictionary<string, string> headers)
         {
             if (!headers.TryGetValue(
@@ -363,6 +379,7 @@ namespace SentraRisk.Services
                 "max-age=",
                 StringComparison.OrdinalIgnoreCase);
         }
+
 
         public bool CheckXFrameOptions(
     Dictionary<string, string> headers)
@@ -385,6 +402,7 @@ namespace SentraRisk.Services
                        StringComparison.OrdinalIgnoreCase);
         }
 
+
         public bool CheckContentTypeProtection(
     Dictionary<string, string> headers)
         {
@@ -400,6 +418,7 @@ namespace SentraRisk.Services
                 StringComparison.OrdinalIgnoreCase);
         }
 
+
         public bool CheckReferrerPolicy(
     Dictionary<string, string> headers)
         {
@@ -413,12 +432,14 @@ namespace SentraRisk.Services
             return !string.IsNullOrWhiteSpace(value);
         }
 
+
         public bool CheckCsp(
     Dictionary<string, string> headers)
         {
             return headers.ContainsKey(
                 "Content-Security-Policy");
         }
+
 
         public bool CheckPermissionsPolicy(
     Dictionary<string, string> headers)
@@ -434,12 +455,122 @@ namespace SentraRisk.Services
                 "Cross-Origin-Opener-Policy");
         }
 
+
         public bool CheckCorp(
     Dictionary<string, string> headers)
         {
             return headers.ContainsKey(
                 "Cross-Origin-Resource-Policy");
         }
+
+
+        public async Task<SpfResult> CheckSpfAsync(
+    string website)
+        {
+            var result =
+                new SpfResult();
+
+            try
+            {
+                website =
+                    NormalizeWebsite(website);
+
+                var domain =
+                    new Uri(website).Host;
+
+                var lookup =
+                    new LookupClient();
+
+                var response =
+                    await lookup.QueryAsync(
+                        domain,
+                        QueryType.TXT);
+
+                foreach (var txtRecord in
+                         response.Answers.TxtRecords())
+                {
+                    var record =
+                        string.Join(
+                            "",
+                            txtRecord.Text);
+
+                    if (record.StartsWith(
+                        "v=spf1",
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.SpfDetected = true;
+
+                        result.SpfRecord =
+                            record;
+
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "SPF ERROR: " +
+                    ex.Message);
+            }
+
+            return result;
+        }
+
+
+        public async Task<DmarcResult> CheckDmarcAsync(
+    string website)
+        {
+            var result =
+                new DmarcResult();
+
+            try
+            {
+                website =
+                    NormalizeWebsite(website);
+
+                var domain =
+                    new Uri(website).Host;
+
+                var lookup =
+                    new LookupClient();
+
+                var response =
+                    await lookup.QueryAsync(
+                        $"_dmarc.{domain}",
+                        QueryType.TXT);
+
+                foreach (var txtRecord in
+                         response.Answers.TxtRecords())
+                {
+                    var record =
+                        string.Join(
+                            "",
+                            txtRecord.Text);
+
+                    if (record.StartsWith(
+                        "v=DMARC1",
+                        StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.DmarcDetected = true;
+
+                        result.DmarcRecord =
+                            record;
+
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "DMARC ERROR: " +
+                    ex.Message);
+            }
+
+            return result;
+        }
+
 
         public TechnologyDetectionResult DetectTechnologies(
     TechnologyEvidence evidence)
