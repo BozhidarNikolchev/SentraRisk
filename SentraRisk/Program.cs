@@ -4,10 +4,6 @@ using SentraRisk.Logic;
 var input = new WebsiteInput
 {
     UsesHttps = false,
-    HasBackup = false,
-    UsesOutdatedPlugins = true,
-    HasAdminUser = true,
-    HasTwoFactorAuth = false
 };
 
 var calculator = new RiskCalculator();

@@ -242,17 +242,115 @@ input.IsReachable);
                     await scanner.CheckHttpsAsync(input.WebsiteUrl);
 
                 input.RedirectsToHttps =
-                    await scanner.CheckHttpsRedirectAsync(
-                        input.WebsiteUrl);
+     httpInfo?.UsesHttps ?? false;
+
 
                 Console.WriteLine(
-"RedirectsToHttps: " +
-input.RedirectsToHttps);
+                    "RedirectsToHttps: " +
+                    input.RedirectsToHttps);
+
+                Console.WriteLine(
+                    "RAW REDIRECT RESULT: " +
+                    input.RedirectsToHttps);
+
+                Console.WriteLine(
+                    "HTTP INFO REDIRECTED: " +
+                    httpInfo?.Redirected);
+
+                Console.WriteLine(
+                    "HTTP INFO FINAL URL: " +
+                    httpInfo?.FinalUrl);
+
+                Console.WriteLine(
+"HTTP INFO USES HTTPS: " +
+httpInfo?.UsesHttps);
 
                 input.SslInfo =
                     await scanner.GetSslInfoAsync(
                         input.WebsiteUrl);
             }
+
+            var assessment =
+    new WebsiteAssessment();
+
+            assessment.IsReachable =
+                input.IsReachable;
+
+            assessment.UsesHttps =
+                input.UsesHttps;
+
+            assessment.RedirectsToHttps =
+                input.RedirectsToHttps;
+
+            Console.WriteLine(
+"ASSESSMENT REDIRECTS TO HTTPS: " +
+assessment.RedirectsToHttps);
+
+            assessment.SslInfo =
+                input.SslInfo;
+
+            assessment.Technologies =
+                technologies;
+
+            assessment.Spf =
+                spfResult;
+
+            assessment.Dmarc =
+                dmarcResult;
+
+            assessment.SecurityHeaders =
+                securityHeaders;
+
+            assessment.HstsEnabled =
+hstsEnabled;
+
+            Console.WriteLine(
+                "ASSESSMENT HSTS ENABLED: " +
+                assessment.HstsEnabled);
+
+            assessment.XFrameProtected =
+                xFrameProtected;
+
+            assessment.ContentTypeProtected =
+                contentTypeProtected;
+
+            assessment.ReferrerPolicyEnabled =
+                referrerProtected;
+
+            assessment.CspEnabled =
+                cspEnabled;
+
+            assessment.PermissionsPolicyEnabled =
+                permissionsEnabled;
+
+            assessment.CoopEnabled =
+                coopEnabled;
+
+            assessment.CorpEnabled =
+                corpEnabled;
+
+            var calculatorV2 =
+new RiskCalculatorV2();
+
+            var v2Result =
+                calculatorV2.Calculate(
+                    assessment);
+
+            Console.WriteLine();
+            Console.WriteLine(
+                "===== V2 RESULT =====");
+
+            Console.WriteLine(
+                "Score: " +
+                v2Result.Score);
+
+            Console.WriteLine(
+                "Risk Level: " +
+                v2Result.RiskLevel);
+
+            Console.WriteLine(
+                "Top Issue: " +
+                v2Result.TopIssue);
 
             var calculator = new RiskCalculator();
 

@@ -276,6 +276,26 @@ namespace SentraRisk.Services
                 var response =
                     await client.GetAsync(website);
 
+                Console.WriteLine(
+"SECURITY STATUS CODE: " +
+(int)response.StatusCode);
+
+                Console.WriteLine(
+                    "SECURITY RESPONSE VERSION: " +
+                    response.Version);
+
+                Console.WriteLine(
+                    "SECURITY SERVER HEADER: " +
+                    (response.Headers.Contains("Server")
+                        ? string.Join(
+                            ", ",
+                            response.Headers.GetValues("Server"))
+                        : "NONE"));
+
+                Console.WriteLine(
+"SECURITY HEADER RESPONSE URI: " +
+response.RequestMessage?.RequestUri);
+
                 var headers =
                     new Dictionary<string, string>();
 
@@ -330,6 +350,10 @@ namespace SentraRisk.Services
                 var response =
                     await client.GetAsync(website);
 
+                Console.WriteLine(
+"TECH EVIDENCE RESPONSE URI: " +
+response.RequestMessage?.RequestUri);
+
                 foreach (var header in response.Headers)
                 {
                     evidence.Headers[header.Key] =
@@ -366,20 +390,26 @@ namespace SentraRisk.Services
         }
 
 
-        public bool CheckHsts(Dictionary<string, string> headers)
+        public bool CheckHsts(
+     Dictionary<string, string> headers)
         {
             if (!headers.TryGetValue(
                 "Strict-Transport-Security",
                 out var hsts))
             {
+                Console.WriteLine(
+                    "HSTS HEADER NOT FOUND");
+
                 return false;
             }
+
+            Console.WriteLine(
+                "HSTS VALUE: " + hsts);
 
             return hsts.Contains(
                 "max-age=",
                 StringComparison.OrdinalIgnoreCase);
         }
-
 
         public bool CheckXFrameOptions(
     Dictionary<string, string> headers)
