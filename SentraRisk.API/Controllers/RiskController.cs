@@ -352,11 +352,7 @@ new RiskCalculatorV2();
                 "Top Issue: " +
                 v2Result.TopIssue);
 
-            var calculator = new RiskCalculator();
-
-            var result = calculator.Calculate(input);
-
-            return Ok(result);
+            return Ok(v2Result);
         }
     }
 }

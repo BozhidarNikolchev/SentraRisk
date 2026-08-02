@@ -251,6 +251,45 @@ new List<string>();
                     "Consider enabling CORP to control resource sharing.");
             }
 
+            if (assessment.Technologies != null)
+            {
+                if (assessment.Technologies.WordPressDetected)
+                {
+                    low.Add(
+                        "WordPress detected");
+                }
+
+                if (assessment.Technologies.ShopifyDetected)
+                {
+                    low.Add(
+                        "Shopify detected");
+                }
+
+                if (assessment.Technologies.CloudflareDetected)
+                {
+                    low.Add(
+                        "Cloudflare detected");
+                }
+
+                if (assessment.Technologies.NginxDetected)
+                {
+                    low.Add(
+                        "Nginx detected");
+                }
+
+                if (assessment.Technologies.ApacheDetected)
+                {
+                    low.Add(
+                        "Apache detected");
+                }
+
+                if (assessment.Technologies.AspNetDetected)
+                {
+                    low.Add(
+                        "ASP.NET detected");
+                }
+            }
+
 
 
             return new RiskResult

@@ -158,6 +158,17 @@ namespace SentraRisk.Services
                 var expirationDate =
                     certificate.NotAfter;
 
+                Console.WriteLine();
+                Console.WriteLine("===== SSL INFO =====");
+                Console.WriteLine("SSL VALID: " + chainTrusted);
+                Console.WriteLine("ISSUER: " + certificate.Issuer);
+                Console.WriteLine("EXPIRATION: " + certificate.NotAfter);
+                Console.WriteLine("DAYS REMAINING: " +
+                    (expirationDate - DateTime.UtcNow).Days);
+                Console.WriteLine("SELF SIGNED: " +
+                    (certificate.Subject == certificate.Issuer));
+
+
                 return new SslInfo
                 {
                     // PRIMARY TRUST METRIC
