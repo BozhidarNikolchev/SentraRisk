@@ -8,6 +8,56 @@ namespace SentraRisk.Logic
         public RiskResult Calculate(
      WebsiteAssessment assessment)
         {
+            string httpsStatus = "";
+            string httpsBusinessImpact = "";
+            string httpsFixInstructions = "";
+            string httpsRecommendedSolution = "";
+
+            string redirectStatus = "";
+            string redirectBusinessImpact = "";
+            string redirectFixInstructions = "";
+            string redirectRecommendedSolution = "";
+
+
+            string sslStatus = "";
+            string sslBusinessImpact = "";
+
+            if (assessment.SslInfo == null)
+            {
+                sslStatus = "Missing";
+
+                sslBusinessImpact =
+                    "Visitors may see browser security warnings and lose trust in the website.";
+            }
+            else if (assessment.SslInfo.IsSelfSigned)
+            {
+                sslStatus = "Self-Signed";
+
+                sslBusinessImpact =
+                    "Visitors may see browser security warnings because the certificate was not issued by a trusted authority.";
+            }
+            else if (assessment.SslInfo.IsCritical)
+            {
+                sslStatus = "Critical";
+
+                sslBusinessImpact =
+                    "The website may soon display certificate warnings that can reduce customer trust and impact sales.";
+            }
+            else if (assessment.SslInfo.IsExpiringSoon)
+            {
+                sslStatus = "Expiring Soon";
+
+                sslBusinessImpact =
+                    "The certificate should be renewed soon to avoid service interruptions and security warnings.";
+            }
+            else
+            {
+                sslStatus = "Healthy";
+
+                sslBusinessImpact =
+                    "The SSL certificate is valid and does not currently present a business risk.";
+            }
+
             if (!assessment.IsReachable)
             {
                 return new RiskResult
@@ -54,6 +104,78 @@ new List<string>();
 
             var recommendations =
                 new List<string>();
+
+
+
+            if (!assessment.UsesHttps)
+            {
+                score += 50;
+
+                critical.Add("HTTPS is not enabled");
+
+                recommendations.Add(
+                    "Enable HTTPS and use a valid SSL certificate.");
+
+                httpsStatus = "Not Enabled";
+
+                httpsBusinessImpact =
+                    "Visitors may see browser security warnings and lose trust in the website. Data submitted through forms may not be adequately protected.";
+
+                httpsFixInstructions =
+                    "1. Contact your hosting provider.\n" +
+                    "2. Enable HTTPS.\n" +
+                    "3. Install a valid SSL certificate.\n" +
+                    "4. Redirect HTTP traffic to HTTPS.\n" +
+                    "5. Test the website after deployment.";
+
+                httpsRecommendedSolution =
+                    "Hosting Provider, Let's Encrypt, Cloudflare";
+            }
+            else
+            {
+                httpsStatus = "Enabled";
+
+                httpsBusinessImpact =
+                    "The website uses HTTPS and provides encrypted communication between visitors and the website.";
+
+                httpsFixInstructions =
+                    "No action required. HTTPS is configured correctly.";
+
+                httpsRecommendedSolution =
+                    "Current configuration appears healthy.";
+            }
+
+            if (assessment.UsesHttps)
+            {
+                redirectStatus = "Healthy";
+
+                redirectBusinessImpact =
+                    "Visitors ultimately reach a secure HTTPS destination, helping ensure encrypted communication.";
+
+                redirectFixInstructions =
+                    "No action required. Visitors are successfully reaching a secure HTTPS version of the website.";
+
+                redirectRecommendedSolution =
+                    "Current configuration appears healthy.";
+            }
+            else
+            {
+                redirectStatus = "Redirect Missing";
+
+                redirectBusinessImpact =
+                    "Visitors may remain on an unencrypted HTTP connection.";
+
+                redirectFixInstructions =
+                    "1. Configure HTTP-to-HTTPS redirection.\n" +
+                    "2. Ensure visitors are directed to HTTPS.\n" +
+                    "3. Test after deployment.";
+
+                redirectRecommendedSolution =
+                    "Cloudflare, Apache Redirect Rules, Nginx Redirect Rules, IIS URL Rewrite";
+            }
+
+
+
 
             if (assessment.SslInfo == null)
             {
@@ -297,11 +419,11 @@ new List<string>();
                 Score = score,
 
                 RiskLevel =
-                    critical.Count > 0
-                        ? "High"
-                        : score >= 30
-                            ? "Medium"
-                            : "Low",
+         critical.Count > 0
+             ? "High"
+             : score >= 30
+                 ? "Medium"
+                 : "Low",
 
                 CriticalIssues = critical,
 
@@ -312,18 +434,65 @@ new List<string>();
                 Recommendations = recommendations,
 
                 Summary =
-    critical.Count > 0
-        ? "Critical security issues were detected."
-        : medium.Count > 0
-            ? "Moderate security issues were detected."
-            : "No major security issues were detected.",
+         critical.Count > 0
+             ? "Critical security issues were detected."
+             : medium.Count > 0
+                 ? "Moderate security issues were detected."
+                 : "No major security issues were detected.",
 
                 TopIssue =
-                    critical.Count > 0
-                        ? critical[0]
-                        : medium.Count > 0
-                            ? medium[0]
-                            : "No major risks detected"
+         critical.Count > 0
+             ? critical[0]
+             : medium.Count > 0
+                 ? medium[0]
+                 : "No major risks detected",
+
+                HasSslCertificate =
+         assessment.SslInfo != null,
+
+                IsSslValid =
+         assessment.SslInfo?.IsValid ?? false,
+
+                SslExpirationDate =
+         assessment.SslInfo?.ExpirationDate,
+
+                SslDaysRemaining =
+         assessment.SslInfo?.DaysRemaining,
+
+                SslIssuer =
+         assessment.SslInfo?.Issuer ?? "",
+
+                IsSslSelfSigned =
+         assessment.SslInfo?.IsSelfSigned ?? false,
+
+                SslStatus = sslStatus,
+
+                SslBusinessImpact =
+    sslBusinessImpact,
+
+                HttpsStatus =
+    httpsStatus,
+
+                HttpsBusinessImpact =
+    httpsBusinessImpact,
+
+                HttpsFixInstructions =
+    httpsFixInstructions,
+
+                HttpsRecommendedSolution =
+    httpsRecommendedSolution,
+
+                RedirectStatus =
+    redirectStatus,
+
+                RedirectBusinessImpact =
+    redirectBusinessImpact,
+
+                RedirectFixInstructions =
+    redirectFixInstructions,
+
+                RedirectRecommendedSolution =
+    redirectRecommendedSolution
             };
         }
     }
