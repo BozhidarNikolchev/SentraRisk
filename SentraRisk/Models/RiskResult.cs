@@ -15,6 +15,8 @@ namespace SentraRisk.Models
 
         public List<string> LowIssues { get; set; } = new();
 
+        public List<string> DetectedTechnologies { get; set; } = new();
+
         public List<string> Recommendations { get; set; } = new();
 
         public List<string> PriorityActions { get; set; } = new();

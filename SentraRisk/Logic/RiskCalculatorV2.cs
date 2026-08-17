@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using SentraRisk.Models;
 
 namespace SentraRisk.Logic
@@ -373,46 +374,81 @@ new List<string>();
                     "Consider enabling CORP to control resource sharing.");
             }
 
+            var detectedTechnologies =
+    new List<string>();
+
             if (assessment.Technologies != null)
             {
                 if (assessment.Technologies.WordPressDetected)
                 {
-                    low.Add(
-                        "WordPress detected");
+                    detectedTechnologies.Add("WordPress");
                 }
 
                 if (assessment.Technologies.ShopifyDetected)
                 {
-                    low.Add(
-                        "Shopify detected");
+                    detectedTechnologies.Add("Shopify");
                 }
 
                 if (assessment.Technologies.CloudflareDetected)
                 {
-                    low.Add(
-                        "Cloudflare detected");
+                    detectedTechnologies.Add("Cloudflare");
                 }
 
                 if (assessment.Technologies.NginxDetected)
                 {
-                    low.Add(
-                        "Nginx detected");
+                    detectedTechnologies.Add("Nginx");
                 }
 
                 if (assessment.Technologies.ApacheDetected)
                 {
-                    low.Add(
-                        "Apache detected");
+                    detectedTechnologies.Add("Apache");
                 }
 
                 if (assessment.Technologies.AspNetDetected)
                 {
-                    low.Add(
-                        "ASP.NET detected");
+                    detectedTechnologies.Add("ASP.NET");
+                }
+
+                if (assessment.Technologies.IisDetected)
+                {
+                    detectedTechnologies.Add("IIS");
+                }
+
+                if (assessment.Technologies.PhpDetected)
+                {
+                    detectedTechnologies.Add("PHP");
                 }
             }
 
+            if (score > 100)
+            {
+                score = 100;
+            }
 
+            recommendations =
+    recommendations
+        .Distinct()
+        .ToList();
+
+            var priority = new List<string>();
+
+            if (critical.Count > 0)
+            {
+                priority.Add(
+                    "Fix critical security issues immediately");
+            }
+
+            if (medium.Count > 0)
+            {
+                priority.Add(
+                    "Address medium risks to stabilize system");
+            }
+
+            if (low.Count > 0)
+            {
+                priority.Add(
+                    "Improve overall security with low-risk fixes");
+            }
 
             return new RiskResult
             {
@@ -433,19 +469,28 @@ new List<string>();
 
                 Recommendations = recommendations,
 
+
+
                 Summary =
-         critical.Count > 0
-             ? "Critical security issues were detected."
-             : medium.Count > 0
-                 ? "Moderate security issues were detected."
-                 : "No major security issues were detected.",
+    critical.Count > 0
+        ? "Your system has critical vulnerabilities that must be addressed immediately."
+        : medium.Count > 0
+            ? "Your system has moderate risks that should be resolved soon."
+            : low.Count > 0
+                ? "Your system is relatively safe but can be improved."
+                : "Your system is secure.",
+
+
 
                 TopIssue =
-         critical.Count > 0
-             ? critical[0]
-             : medium.Count > 0
-                 ? medium[0]
-                 : "No major risks detected",
+    critical.Count > 0
+        ? critical[0]
+        : medium.Count > 0
+            ? medium[0]
+            : low.Count > 0
+                ? low[0]
+                : "No major risks detected",
+
 
                 HasSslCertificate =
          assessment.SslInfo != null,
@@ -492,7 +537,12 @@ new List<string>();
     redirectFixInstructions,
 
                 RedirectRecommendedSolution =
-    redirectRecommendedSolution
+    redirectRecommendedSolution,
+
+                PriorityActions = priority,
+
+                DetectedTechnologies =
+    detectedTechnologies
             };
         }
     }
