@@ -1,6 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using SentraRisk.Models;
+using SentraRisk.Services;
+
+
 
 namespace SentraRisk.Logic
 {
@@ -450,6 +453,16 @@ new List<string>();
                     "Improve overall security with low-risk fixes");
             }
 
+
+
+            var findingBuilder = new FindingBuilder();
+
+            var findings =
+                findingBuilder.Build(assessment);
+
+
+
+
             return new RiskResult
             {
                 Score = score,
@@ -460,6 +473,8 @@ new List<string>();
              : score >= 30
                  ? "Medium"
                  : "Low",
+
+                Findings = findings,
 
                 CriticalIssues = critical,
 
@@ -542,7 +557,19 @@ new List<string>();
                 PriorityActions = priority,
 
                 DetectedTechnologies =
-    detectedTechnologies
+    detectedTechnologies,
+
+    CriticalFindingCount =
+    findings.Count(f => f.Priority == "Critical"),
+
+MediumFindingCount =
+    findings.Count(f => f.Priority == "Medium"),
+
+LowFindingCount =
+    findings.Count(f => f.Priority == "Low"),
+
+HealthyFindingCount =
+    findings.Count(f => f.IsHealthy)
             };
         }
     }

@@ -17,6 +17,8 @@ namespace SentraRisk.Models
 
         public List<string> DetectedTechnologies { get; set; } = new();
 
+        public List<Finding> Findings { get; set; } = new();
+
         public List<string> Recommendations { get; set; } = new();
 
         public List<string> PriorityActions { get; set; } = new();
@@ -56,5 +58,13 @@ namespace SentraRisk.Models
         public string RedirectFixInstructions { get; set; } = "";
 
         public string RedirectRecommendedSolution { get; set; } = "";
+
+        public int CriticalFindingCount { get; set; }
+
+        public int MediumFindingCount { get; set; }
+
+        public int LowFindingCount { get; set; }
+
+        public int HealthyFindingCount { get; set; }
     }
 }
