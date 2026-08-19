@@ -65,6 +65,11 @@ namespace SentraRisk.Services
                 {
                     Title = "HSTS Configured",
 
+                    SuggestedProviders = new List<string>
+{
+    "Current Configuration"
+},
+
                     Category = "Transport Security",
 
                     HowToFixIt =
@@ -158,6 +163,11 @@ namespace SentraRisk.Services
                 {
                     Title = "HTTPS Enabled",
 
+                    SuggestedProviders = new List<string>
+{
+    "Current Configuration"
+},
+
                     Category = "Transport Security",
 
                     HowToFixIt =
@@ -229,6 +239,11 @@ namespace SentraRisk.Services
                 findings.Add(new Finding
                 {
                     Title = "HTTPS Redirect Configured",
+
+                    SuggestedProviders = new List<string>
+{
+    "Current Configuration"
+},
 
                     WhatIsThis =
     "HTTP-to-HTTPS redirection automatically directs visitors from insecure HTTP connections to secure HTTPS connections.",
@@ -462,6 +477,11 @@ namespace SentraRisk.Services
                 {
                     Title = "SSL Certificate Healthy",
 
+                    SuggestedProviders = new List<string>
+{
+    "Current Configuration"
+},
+
                     WhatIsThis =
     "SSL certificates enable trusted encrypted communication between visitors and websites.",
 
@@ -654,6 +674,8 @@ namespace SentraRisk.Services
 
                     Severity = "Low",
 
+                    Category = "Security Headers",
+
                     WhatIsThis =
                         "Referrer-Policy controls how much referral information browsers share with other websites.",
 
@@ -663,19 +685,43 @@ namespace SentraRisk.Services
                     WhatWasFound =
                         "No Referrer-Policy header was observed.",
 
+                    WhyItMatters =
+                        "Referrer-Policy helps control how much information browsers share when users follow links to other websites.",
+
                     BusinessImpact =
                         "More information than intended may be shared with third-party websites.",
+
+                    HowToFixIt =
+                        "Configure a Referrer-Policy response header.",
+
+                    WhereToFixIt =
+                        "Web server configuration, CDN configuration, reverse proxy configuration, or application response headers.",
+
+                    RecommendedSolution =
+                        "Deploy a Referrer-Policy consistent with privacy and business requirements.",
+
+                    SuggestedProviders = new List<string>
+        {
+            "Cloudflare",
+            "Nginx",
+            "Apache",
+            "Microsoft IIS"
+        },
 
                     Priority = "Low"
                 });
             }
 
 
+            
+
             if (!assessment.CspEnabled)
             {
                 findings.Add(new Finding
                 {
                     Title = "Content Security Policy Not Detected",
+
+                    Category = "Security Headers",
 
                     Severity = "Medium",
 
@@ -724,6 +770,14 @@ namespace SentraRisk.Services
                 {
                     Title = "Permissions Policy Not Detected",
 
+                    SuggestedProviders = new List<string>
+{
+    "Cloudflare",
+    "Nginx",
+    "Apache",
+    "Microsoft IIS"
+},
+
                     Category = "Security Headers",
 
                     WhyItMatters =
@@ -763,6 +817,14 @@ namespace SentraRisk.Services
                 {
                     Title = "Cross-Origin Opener Policy Not Detected",
 
+                    SuggestedProviders = new List<string>
+{
+    "Cloudflare",
+    "Nginx",
+    "Apache",
+    "Microsoft IIS"
+},
+
                     Category = "Security Headers",
 
                     WhyItMatters =
@@ -801,6 +863,14 @@ namespace SentraRisk.Services
                 findings.Add(new Finding
                 {
                     Title = "Cross-Origin Resource Policy Not Detected",
+
+                    SuggestedProviders = new List<string>
+{
+    "Cloudflare",
+    "Nginx",
+    "Apache",
+    "Microsoft IIS"
+},
 
                     Category = "Security Headers",
 
