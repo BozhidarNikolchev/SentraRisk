@@ -457,10 +457,17 @@ new List<string>();
 
             var findingBuilder = new FindingBuilder();
 
+
             var findings =
                 findingBuilder.Build(assessment);
 
 
+            var executiveSummary =
+ExecutiveSummaryBuilder.Build(findings);
+
+
+            var report =
+                ReportBuilder.Build(findings);
 
 
             return new RiskResult
@@ -507,6 +514,7 @@ new List<string>();
                 : "No major risks detected",
 
 
+
                 HasSslCertificate =
          assessment.SslInfo != null,
 
@@ -524,6 +532,8 @@ new List<string>();
 
                 IsSslSelfSigned =
          assessment.SslInfo?.IsSelfSigned ?? false,
+
+
 
                 SslStatus = sslStatus,
 
@@ -559,16 +569,24 @@ new List<string>();
                 DetectedTechnologies =
     detectedTechnologies,
 
-    CriticalFindingCount =
+                ExecutiveSummary =
+    executiveSummary,
+
+                Report =
+    report,
+
+
+
+                CriticalFindingCount =
     findings.Count(f => f.Priority == "Critical"),
 
-MediumFindingCount =
+                MediumFindingCount =
     findings.Count(f => f.Priority == "Medium"),
 
-LowFindingCount =
+                LowFindingCount =
     findings.Count(f => f.Priority == "Low"),
 
-HealthyFindingCount =
+                HealthyFindingCount =
     findings.Count(f => f.IsHealthy)
             };
         }

@@ -66,5 +66,9 @@ namespace SentraRisk.Models
         public int LowFindingCount { get; set; }
 
         public int HealthyFindingCount { get; set; }
+
+        public ExecutiveSummary? ExecutiveSummary { get; set; }
+
+        public AssessmentReport? Report { get; set; }
     }
 }
