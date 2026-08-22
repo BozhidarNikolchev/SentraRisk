@@ -371,6 +371,15 @@ response.RequestMessage?.RequestUri);
                         string.Join(", ", header.Value);
                 }
 
+
+                Console.WriteLine("===== TECHNOLOGY HEADERS =====");
+
+                foreach (var header in evidence.Headers)
+                {
+                    Console.WriteLine(
+                        $"{header.Key}: {header.Value}");
+                }
+
                 foreach (var header in response.Content.Headers)
                 {
                     evidence.Headers[header.Key] =
@@ -691,6 +700,8 @@ response.RequestMessage?.RequestUri);
                         StringComparison.OrdinalIgnoreCase)
                 );
 
+
+
             result.PhpDetected =
                 evidence.Headers.TryGetValue(
                     "X-Powered-By",
@@ -699,6 +710,26 @@ response.RequestMessage?.RequestUri);
                 poweredBy.Contains(
                     "php",
                     StringComparison.OrdinalIgnoreCase);
+
+
+
+
+            result.GitHubDetected =
+(
+evidence.Headers.TryGetValue(
+    "Server",
+    out var githubServer)
+&&
+githubServer.Contains(
+    "github",
+    StringComparison.OrdinalIgnoreCase)
+)
+||
+evidence.Headers.ContainsKey(
+"X-GitHub-Request-Id")
+||
+evidence.Headers.ContainsKey(
+"x-github-edge-region");
 
             return result;
         }

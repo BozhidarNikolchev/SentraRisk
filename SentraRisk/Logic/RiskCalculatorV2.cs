@@ -397,6 +397,11 @@ new List<string>();
                     detectedTechnologies.Add("Cloudflare");
                 }
 
+                if (assessment.Technologies.GitHubDetected)
+                {
+                    detectedTechnologies.Add("GitHub");
+                }
+
                 if (assessment.Technologies.NginxDetected)
                 {
                     detectedTechnologies.Add("Nginx");
