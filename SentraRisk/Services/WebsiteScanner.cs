@@ -622,6 +622,96 @@ response.RequestMessage?.RequestUri);
         }
 
 
+
+
+        public async Task<DkimResult> CheckDkimAsync(
+     string website)
+        {
+            var result =
+                new DkimResult();
+
+            try
+            {
+                website =
+                    NormalizeWebsite(website);
+
+                var domain =
+                    new Uri(website).Host;
+
+                var lookup =
+                    new LookupClient();
+
+                var selectors =
+    new[]
+    {
+        "selector1",
+        "selector2",
+        "default",
+        "google",
+        "googlemail",
+        "dkim",
+        "k1",
+        "k2",
+        "smtp",
+        "mail",
+        "mta",
+        "api",
+        "s1",
+        "s2"
+    };
+
+                foreach (var selector in selectors)
+                {
+                    var response =
+                        await lookup.QueryAsync(
+                            $"{selector}._domainkey.{domain}",
+                            QueryType.TXT);
+
+                    foreach (var txtRecord in
+                             response.Answers.TxtRecords())
+                    {
+                        var record =
+                            string.Join(
+                                "",
+                                txtRecord.Text);
+
+                        if (
+                            record.Contains(
+                                "v=DKIM1",
+                                StringComparison.OrdinalIgnoreCase)
+                            ||
+                            record.Contains(
+                                "p=",
+                                StringComparison.OrdinalIgnoreCase))
+                        {
+                            result.DkimDetected =
+                                true;
+
+                            result.SelectorFound =
+                                selector;
+
+                            result.DkimRecord =
+                                record;
+
+                            return result;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(
+                    "DKIM ERROR: " +
+                    ex.Message);
+            }
+
+            return result;
+        }
+
+
+
+
+
         public TechnologyDetectionResult DetectTechnologies(
     TechnologyEvidence evidence)
         {
