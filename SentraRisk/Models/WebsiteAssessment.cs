@@ -16,7 +16,8 @@ namespace SentraRisk.Models
 
         public DmarcResult? Dmarc { get; set; }
 
-        public DkimResult? Dkim { get; set; }
+
+        // public DkimResult? Dkim { get; set; }
 
         public bool HstsEnabled { get; set; }
 

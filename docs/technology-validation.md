@@ -209,4 +209,9 @@ YYYY-MM-DD
 
 Validated By:
 
-Bozhidar Nikolchev
+Bozhidar Nikolchev  
+
+////////////////////////////////////////////////////////////////////////
+
+Dkim cannot be included! The app checks URLs, not email messages.
+

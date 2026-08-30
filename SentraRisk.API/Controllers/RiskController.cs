@@ -123,20 +123,20 @@ technologyEvidence.Headers.Count);
 
 
 
-            var dkimResult =
-await scanner.CheckDkimAsync(
-    input.WebsiteUrl);
+            //             var dkimResult =
+            // await scanner.CheckDkimAsync(
+            //     input.WebsiteUrl);
 
-            Console.WriteLine();
-            Console.WriteLine(
-            $"DKIM DETECTED: {dkimResult.DkimDetected}");
+            //             Console.WriteLine();
+            //             Console.WriteLine(
+            //             $"DKIM DETECTED: {dkimResult.DkimDetected}");
 
-            Console.WriteLine(
-                $"SELECTOR FOUND: {dkimResult.SelectorFound}");
+            //             Console.WriteLine(
+            //                 $"SELECTOR FOUND: {dkimResult.SelectorFound}");
 
-            Console.WriteLine(
-                $"DKIM RECORD: {dkimResult.DkimRecord}");
-            Console.WriteLine();
+            //             Console.WriteLine(
+            //                 $"DKIM RECORD: {dkimResult.DkimRecord}");
+            //             Console.WriteLine();
 
 
 
@@ -317,8 +317,8 @@ assessment.RedirectsToHttps);
             assessment.Dmarc =
                 dmarcResult;
 
-            assessment.Dkim =
-                dkimResult;
+            // assessment.Dkim =
+            //     dkimResult;
 
             assessment.SecurityHeaders =
                 securityHeaders;
